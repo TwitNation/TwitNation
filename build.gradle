@@ -34,6 +34,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	runtimeOnly 'com.h2database:h2'
+	//jwt
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.2'
+
 
 }
 
