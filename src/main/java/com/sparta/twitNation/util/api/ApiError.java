@@ -1,4 +1,4 @@
-package com.sparta.twitNation.util.aop;
+package com.sparta.twitNation.util.api;
 
 import lombok.Getter;
 
