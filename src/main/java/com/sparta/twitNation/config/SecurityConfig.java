@@ -29,12 +29,11 @@ public class SecurityConfig {
 
     //jwt 필터 등록 예정
 
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-
+        log.debug("디버그: filterChain 등록");
         http
-                .headers(headers -> headers
-                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'")) //iframe 비활성화
-                )
+                .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .csrf(AbstractHttpConfigurer::disable) //csrf 비활성화
                 .cors(cors -> cors.configurationSource(configurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //jwt 사용
@@ -45,6 +44,8 @@ public class SecurityConfig {
     }
 
     public CorsConfigurationSource configurationSource(){
+        log.debug("디버그: filterChain에 configurationSource cors 설정 등록");
+
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*"); // 모든 메서드 허용
