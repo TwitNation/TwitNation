@@ -2,6 +2,7 @@ package com.sparta.twitNation.config;
 
 import com.sparta.twitNation.config.jwt.JwtAuthenticationFilter;
 import com.sparta.twitNation.config.jwt.JwtAuthorizationFilter;
+import com.sparta.twitNation.config.jwt.JwtExceptionFilter;
 import com.sparta.twitNation.config.jwt.JwtProcess;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -39,7 +40,8 @@ public class SecurityConfig {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-            http.addFilter(new JwtAuthenticationFilter(authenticationManager));
+            http.addFilterBefore(new JwtExceptionFilter(), JwtAuthorizationFilter.class);
+            http.addFilter(new JwtAuthenticationFilter(authenticationManager, jwtProcess));
             http.addFilter(new JwtAuthorizationFilter(authenticationManager, jwtProcess));
             super.configure(http);
         }

@@ -1,5 +1,8 @@
 package com.sparta.twitNation.ex;
 
+import lombok.Getter;
+
+@Getter
 public class CustomJwtException extends RuntimeException{
 
     int status;
