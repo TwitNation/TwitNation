@@ -10,6 +10,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,13 +25,15 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProcess jwtProcess;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess) {
         super(authenticationManager);
         setFilterProcessesUrl("/auth/login");
         this.authenticationManager = authenticationManager;
+        this.jwtProcess = jwtProcess;
     }
 
     @Override
@@ -66,7 +69,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         LoginUser loginUser = (LoginUser) authResult.getPrincipal();
-        String token = JwtProcess.create(loginUser);
+        String token = jwtProcess.create(loginUser);
         LoginRespDto loginRespDto = new LoginRespDto(loginUser.getUser());
 
         ApiResult<LoginRespDto> apiResult = ApiResult.success(loginRespDto);
