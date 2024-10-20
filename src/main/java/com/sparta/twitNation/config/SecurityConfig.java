@@ -1,6 +1,9 @@
 package com.sparta.twitNation.config;
 
 import com.sparta.twitNation.config.jwt.JwtAuthenticationFilter;
+import com.sparta.twitNation.config.jwt.JwtAuthorizationFilter;
+import com.sparta.twitNation.config.jwt.JwtProcess;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +22,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final Logger log = LoggerFactory.getLogger((getClass()));
+    private final JwtProcess jwtProcess;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
@@ -32,10 +37,11 @@ public class SecurityConfig {
     //jwt 필터 등록 예정
     public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity>{
         @Override
-        public void configure(HttpSecurity builder) throws Exception {
-            AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
-            builder.addFilter(new JwtAuthenticationFilter(authenticationManager));
-            super.configure(builder);
+        public void configure(HttpSecurity http) throws Exception {
+            AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+            http.addFilter(new JwtAuthenticationFilter(authenticationManager));
+            http.addFilter(new JwtAuthorizationFilter(authenticationManager, jwtProcess));
+            super.configure(http);
         }
     }
 
