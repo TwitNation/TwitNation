@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class LoginUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         //role 관련 의논 후 설정
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
