@@ -49,6 +49,9 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
+        if(!post.getUser().getId().equals(userId)){
+            throw new CustomApiException(ErrorCode.POST_FORBIDDEN);
+        }
         post.modify(postModifyReqDto.content());
         log.info("유저 ID {}: 게시글 ID {} 수정 완료", userId, postId);
         return new PostModifyRespDto(post);
