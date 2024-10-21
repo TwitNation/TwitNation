@@ -8,6 +8,7 @@ import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
+import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +28,8 @@ public class PostService {
     @Transactional
     public PostCreateRespDto createPost(PostCreateReqDto postCreateReqDto, LoginUser loginUser){
         Long userId = loginUser.getUser().getId();
-        if (userId == null) {
-            log.error("인증 실패: userId is null");
-            throw new CustomApiException("인증 정보가 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
-        }
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomApiException("존재하지 않는 유저입니다", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND)
         );
         Post post = postRepository.save(postCreateReqDto.toEntity(user));
         return new PostCreateRespDto(post);

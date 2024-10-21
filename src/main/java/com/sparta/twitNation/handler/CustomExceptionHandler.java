@@ -24,6 +24,6 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(CustomApiException.class)
     public ResponseEntity<ApiResult<String>> apiException(CustomApiException e){
-        return new ResponseEntity<>(ApiResult.error(e.getStatus(), e.getMsg()), HttpStatusCode.valueOf(e.getStatus()));
+        return new ResponseEntity<>(ApiResult.error(e.getErrorCode().getStatus(), e.getErrorCode().getMessage()), HttpStatusCode.valueOf(e.getErrorCode().getStatus()));
     }
 }
