@@ -1,4 +1,4 @@
-package com.sparta.twitNation.domain.bookmark;
+package com.sparta.twitNation.domain.retweet;
 
 import com.sparta.twitNation.domain.base.BaseEntity;
 import com.sparta.twitNation.domain.post.Post;
@@ -11,13 +11,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "bookmarks")
-public class Bookmark extends BaseEntity {
+@Table(name = "retweets")
+public class Retweet extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
