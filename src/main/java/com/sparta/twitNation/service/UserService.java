@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserCreateRespDto addUser(UserCreateReqDto dto) {
+    public UserCreateRespDto register(UserCreateReqDto dto) {
         String encodedPassword = passwordEncoder.encode(dto.password());
         User user = new User(dto, encodedPassword);
         return new UserCreateRespDto(userRepository.save(user).getId());
