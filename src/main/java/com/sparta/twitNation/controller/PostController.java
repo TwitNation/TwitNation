@@ -32,7 +32,7 @@ public class PostController {
     public ResponseEntity<ApiResult<PostModifyRespDto>> modifyPost(@PathVariable(value = "postId") Long postId,
                                                                    @RequestBody @Valid PostModifyReqDto postModifyReqDto,
                                                                    @AuthenticationPrincipal LoginUser loginUser){
-        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.OK);
     }
 
 }
