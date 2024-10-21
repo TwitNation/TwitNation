@@ -49,7 +49,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void success_authentication_test() throws Exception {
         //given
-        LoginReqDto loginReqDto = LoginReqDto.builder().username("username").password("password").build();
+        LoginReqDto loginReqDto = LoginReqDto.builder().email("asdf@naver.com").password("password").build();
         String requestBody = om.writeValueAsString(loginReqDto);
         System.out.println("requestBody = " + requestBody);
 
@@ -74,7 +74,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void fail_authentication_test() throws Exception {
         //given
-        LoginReqDto loginReqDto = LoginReqDto.builder().username("username").password("password1234").build();
+        LoginReqDto loginReqDto = LoginReqDto.builder().email("asdf@naver.com").password("password1234").build();
         String requestBody = om.writeValueAsString(loginReqDto);
 
         //when
