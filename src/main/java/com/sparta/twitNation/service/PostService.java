@@ -50,6 +50,7 @@ public class PostService {
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
         post.modify(postModifyReqDto.content());
+        log.info("유저 ID {}: 게시글 ID {} 수정 완료", userId, postId);
         return new PostModifyRespDto(post);
     }
 
