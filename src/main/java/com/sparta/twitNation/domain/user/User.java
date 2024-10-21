@@ -4,6 +4,7 @@ import com.sparta.twitNation.domain.base.BaseEntity;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,11 +39,11 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    public User(UserCreateReqDto dto, String password) {
+    public User(UserCreateReqDto dto) {
         this.email = dto.email();
         this.bio = dto.bio();
         this.profileImg = dto.profileImg();
         this.nickname = dto.nickname();
-        this.password = password;
+        this.password = dto.password();
     }
 }
