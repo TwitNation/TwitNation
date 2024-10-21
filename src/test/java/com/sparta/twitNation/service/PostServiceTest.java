@@ -156,4 +156,23 @@ class PostServiceTest {
         assertThat(exception.getMessage()).isEqualTo("해당 게시글을 수정할 권한이 없습니다");
         assertThat(exception.getErrorCode().getStatus()).isEqualTo(403);
     }
+
+    @Test
+    void fail_modifyPost_userNotFound_test() {
+        // given
+        Long userId = 1L;
+        Long postId = 5L;
+
+        User user = User.builder().id(userId).build();
+        LoginUser loginUser = new LoginUser(user);
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // when  then
+        CustomApiException exception = assertThrows(CustomApiException.class, () -> {
+            postService.modifyPost(new PostModifyReqDto("수정 내용"), postId, loginUser);
+        });
+
+        assertThat(exception.getMessage()).isEqualTo("존재하지 않는 유저입니다");
+        assertThat(exception.getErrorCode().getStatus()).isEqualTo(404);
+    }
 }
