@@ -50,7 +50,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void success_authentication_test() throws Exception {
         //given
-        LoginReqDto loginReqDto = LoginReqDto.builder().username("username").password("password").build();
+        LoginReqDto loginReqDto = LoginReqDto.builder().username("userA").password("password").build();
         String requestBody = om.writeValueAsString(loginReqDto);
         System.out.println("requestBody = " + requestBody);
 
@@ -69,7 +69,7 @@ class JwtAuthenticationFilterTest {
         resultActions.andExpect(status().isOk());
         assertNotNull(jwtToken);
         assertTrue(jwtToken.startsWith(JwtVo.TOKEN_PREFIX));
-        resultActions.andExpect(jsonPath("$.data.username").value("username"));
+        resultActions.andExpect(jsonPath("$.data.username").value("userA"));
     }
 
     @Test
