@@ -6,10 +6,15 @@ import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
+import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -34,5 +39,20 @@ public class PostService {
         Post post = postRepository.save(postCreateReqDto.toEntity(user));
         return new PostCreateRespDto(post);
     }
+
+    @Transactional
+    public PostModifyRespDto modifyPost(PostModifyReqDto postModifyReqDto, Long postId, LoginUser loginUser){
+        Long userId = loginUser.getUser().getId();
+        userRepository.findById(userId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND)
+        );
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
+        );
+        post.modify(postModifyReqDto.content());
+        return new PostModifyRespDto(post);
+    }
+
+
 
 }
