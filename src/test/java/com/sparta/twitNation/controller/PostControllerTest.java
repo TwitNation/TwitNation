@@ -1,16 +1,17 @@
 package com.sparta.twitNation.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.config.jwt.JwtProcess;
 import com.sparta.twitNation.config.jwt.JwtVo;
-import com.sparta.twitNation.domain.post.Post;
+import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
+import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.service.PostService;
+import com.sparta.twitNation.util.dummy.DummyObject;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ import static org.awaitility.Awaitility.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-class PostControllerTest {
+class PostControllerTest extends DummyObject {
 
     @Autowired
     private PostService postService;
@@ -53,6 +55,8 @@ class PostControllerTest {
     private ObjectMapper om;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PostRepository postRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -67,9 +71,9 @@ class PostControllerTest {
 
     @BeforeEach
     void setUp(){
-        String password = "password";
-        User user = User.builder().id(1L).username("userA").nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
+        User user = newUser();
         userRepository.save(user);
+        postRepository.save(newPost(user));
         em.clear();
 
         LoginUser loginUser = new LoginUser(user);
@@ -134,4 +138,23 @@ class PostControllerTest {
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("responseBody = " + responseBody);
     }
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @Test
+    void success_modifyPost_test() throws Exception {
+        //given
+        PostModifyReqDto postModifyReqDto = new PostModifyReqDto("수정 성공");
+        String requestBody = om.writeValueAsString(postModifyReqDto);
+
+        //when then
+        ResultActions resultActions = mvc.perform(put("/api/posts/{postId}", 1L)
+                        .header(JwtVo.HEADER, token)
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content").value("수정 성공"));
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("responseBody = " + responseBody);
+    }
+
 }
