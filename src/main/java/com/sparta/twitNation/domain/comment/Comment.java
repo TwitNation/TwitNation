@@ -40,7 +40,12 @@ public class Comment extends BaseEntity {
     }
 
     public void modify(String content) {
-        if (content != null)
+        if (content != null) {
             this.content = content;
+        }
+    }
+
+    public boolean isWrittenBy(Long userId) {
+        return this.user.getId().equals(userId);
     }
 }

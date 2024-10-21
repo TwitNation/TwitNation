@@ -53,13 +53,13 @@ public class CommentService {
                 () -> new CustomApiException("댓글을 찾을 수 없습니다", HttpStatus.NOT_FOUND.value())
         );
 
-        if (!comment.getUser().getId().equals(userId)) {
+        if (!comment.isWrittenBy(userId)) {
             throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다", HttpStatus.UNAUTHORIZED.value());
         }
 
         comment.modify(commentModifyReqDto.content());
 
-        commentRepository.saveAndFlush(comment);
+        commentRepository.save(comment);
 
         return new CommentModifyRespDto(comment.getPost().getId(), comment.getId(), comment.getLastModifiedAt());
     }
@@ -76,12 +76,12 @@ public class CommentService {
                 () -> new CustomApiException("댓글을 찾을 수 없습니다", HttpStatus.NOT_FOUND.value())
         );
 
-        if (!comment.getUser().getId().equals(userId)) {
+        if (!comment.isWrittenBy(userId)) {
             throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다", HttpStatus.UNAUTHORIZED.value());
         }
 
         commentRepository.deleteById(comment.getId());
 
-        return new CommentDeleteRespDto(comment.getId(), true);
+        return new CommentDeleteRespDto(comment.getId(), commentRepository.existsById(commentId));
     }
 }
