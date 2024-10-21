@@ -31,8 +31,7 @@ public class BookmarkService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
-//        User user = userRepository.findByEmail()
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
 
         Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostId(postId);
         boolean isBookmarked;
