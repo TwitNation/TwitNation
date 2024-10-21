@@ -34,9 +34,24 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	runtimeOnly 'com.h2database:h2'
+	//jwt
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.2'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	//swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+	//s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+sourceSets {
+	test {
+		java {
+			srcDirs = ['src/test/java']
+		}
+	}
 }
