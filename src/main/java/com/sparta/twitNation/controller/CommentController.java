@@ -2,7 +2,9 @@ package com.sparta.twitNation.controller;
 
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.comment.req.CommentCreateReqDto;
+import com.sparta.twitNation.dto.comment.req.CommentModifyReqDto;
 import com.sparta.twitNation.dto.comment.resp.CommentCreateRespDto;
+import com.sparta.twitNation.dto.comment.resp.CommentModifyRespDto;
 import com.sparta.twitNation.service.CommentService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
@@ -27,4 +29,13 @@ public class CommentController {
                                                                          @AuthenticationPrincipal LoginUser loginUser) {
         return new ResponseEntity<>(ApiResult.success(commentService.createComment(commentCreateReqDto,loginUser,postId)), HttpStatus.CREATED);
     }
+
+    @PutMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<ApiResult<CommentModifyRespDto>> updateComment(@PathVariable(name = "postId") Long postId,
+                                                                         @PathVariable(name = "commentId") Long commentId,
+                                                                         @RequestBody @Valid CommentModifyReqDto commentModifyReqDto,
+                                                                         @AuthenticationPrincipal LoginUser loginUser) {
+        return new ResponseEntity<>(ApiResult.success(commentService.updateComment(postId, commentId, commentModifyReqDto, loginUser)), HttpStatus.OK);
+    }
+
 }
