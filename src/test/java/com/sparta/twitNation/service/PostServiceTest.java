@@ -10,6 +10,7 @@ import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
+import com.sparta.twitNation.ex.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -121,9 +122,12 @@ class PostServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
-        assertThrows(CustomApiException.class, () ->{
+        CustomApiException exception = assertThrows(CustomApiException.class, () -> {
             postService.modifyPost(new PostModifyReqDto("test content"), postId, loginUser);
         });
+
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.POST_NOT_FOUND);
+        assertThat(exception.getErrorCode().getStatus()).isEqualTo(404);
 
 
     }
