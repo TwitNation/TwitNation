@@ -3,6 +3,7 @@ package com.sparta.twitNation.dto.user.req;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Setter;
@@ -16,7 +17,8 @@ public record UserCreateReqDto(
         @Email(message = "정확한 이메일 형식으로 입력해주세요. ")
         String email,
         @NotBlank
-        @Size(max = 20, message = "패스워드 글자 수는 60자까지만 입력해주세요.")
+        @Size(min = 8, max = 20, message = "패스워드 글자 수는 60자까지만 입력해주세요.")
+        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
         String password,
 
         @NotBlank(message = "닉네임을 입력해주세요.")
