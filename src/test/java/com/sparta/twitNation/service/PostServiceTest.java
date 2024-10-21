@@ -7,6 +7,7 @@ import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.ex.CustomApiException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,5 +54,28 @@ class PostServiceTest {
         //then
         assertNotNull(result);
         verify(postRepository).save(any(Post.class));
+    }
+
+    @Test
+    void fail_createPost_userIdIsNull_test(){
+        LoginUser loginUser = new LoginUser(User.builder().build());
+
+        assertThrows(CustomApiException.class, () -> {
+            postService.createPost(new PostCreateReqDto("test content"), loginUser);
+        });
+    }
+
+    @Test
+    void fail_createPost_userNotFound_test(){
+        //given
+        Long userId = 1L;
+        User user = User.builder().id(userId).build();
+        LoginUser loginUser = new LoginUser(user);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(CustomApiException.class, () ->{
+            postService.createPost(new PostCreateReqDto("test content"), loginUser);
+        });
     }
 }
