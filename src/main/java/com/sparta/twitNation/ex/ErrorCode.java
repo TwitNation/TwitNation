@@ -1,12 +1,13 @@
 package com.sparta.twitNation.ex;
+
 import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
 
     USER_NOT_FOUND(404, "존재하지 않는 유저입니다"),
-    INTERNAL_SERVER_ERROR(500, "서버 내부 오류");
-
+    INTERNAL_SERVER_ERROR(500, "서버 내부 오류"),
+    ALREADY_USER_EXIST(400, "존재하는 사용자입니다.");
 
     private final int status;
     private final String message;
