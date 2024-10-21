@@ -30,10 +30,6 @@ public class CommentService {
     public CommentCreateRespDto createComment(CommentCreateReqDto commentReqDto, LoginUser loginUser, Long postId) {
         Long userId = loginUser.getUser().getId();
 
-        if (userId == null) {
-            throw new CustomApiException("인증 정보가 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
-        }
-
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
         );
@@ -47,10 +43,6 @@ public class CommentService {
     public CommentModifyRespDto updateComment(Long postId, Long commentId, CommentModifyReqDto commentModifyReqDto, LoginUser loginUser) {
 
         Long userId = loginUser.getUser().getId();
-
-        if (userId == null) {
-            throw new CustomApiException("인증 정보가 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
-        }
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
@@ -75,10 +67,6 @@ public class CommentService {
     @Transactional
     public CommentDeleteRespDto deleteComment(Long postId, Long commentId, LoginUser loginUser) {
         Long userId = loginUser.getUser().getId();
-
-        if (userId == null) {
-            throw new CustomApiException("인증 정보가 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
-        }
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
