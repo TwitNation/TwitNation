@@ -40,8 +40,8 @@ public class PostController {
     ) {
         return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.OK);
     }
-  
-   @GetMapping("/{userId}")
+
+    @GetMapping("/{userId}")
     public ResponseEntity<ApiResult<UserPostsRespDto>> readPostByUser(
             @PathVariable final Long userId,
             @RequestParam(defaultValue = "0", value = "page") int page,
