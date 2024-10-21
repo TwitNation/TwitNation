@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Setter;
 
 public record UserCreateReqDto(
         @NotBlank(message = "이메일을 입력헤주세요.")
