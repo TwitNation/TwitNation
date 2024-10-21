@@ -1,6 +1,7 @@
 package com.sparta.twitNation.controller;
 
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
+import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import com.sparta.twitNation.service.UserService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
@@ -18,9 +19,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/auth/join")
-    public ResponseEntity<ApiResult<Long>> joinUser(@RequestBody @Valid UserCreateReqDto dto) {
-        Long id = userService.addUser(dto);
-        ApiResult<Long> success = ApiResult.success(id);
+    public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(@RequestBody @Valid UserCreateReqDto dto) {
+        UserCreateRespDto RespDto = userService.addUser(dto);
+        ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }
 }
