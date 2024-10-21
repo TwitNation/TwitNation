@@ -39,8 +39,8 @@ public class Comment extends BaseEntity {
         this.id = id;
     }
 
-    public void modify(CommentModifyReqDto commentModifyReqDto) {
-        if (commentModifyReqDto.content() != null)
-            this.content = commentModifyReqDto.content();
+    public void modify(String content) {
+        if (content != null)
+            this.content = content;
     }
 }

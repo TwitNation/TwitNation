@@ -28,7 +28,7 @@ public class CommentController {
     public ResponseEntity<ApiResult<CommentCreateRespDto>> createComment(@PathVariable(name = "postId") Long postId,
                                                                          @RequestBody @Valid CommentCreateReqDto commentCreateReqDto,
                                                                          @AuthenticationPrincipal LoginUser loginUser) {
-        return new ResponseEntity<>(ApiResult.success(commentService.createComment(commentCreateReqDto,loginUser,postId)), HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResult.success(commentService.createComment(commentCreateReqDto, loginUser, postId)), HttpStatus.CREATED);
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
@@ -38,11 +38,12 @@ public class CommentController {
                                                                          @AuthenticationPrincipal LoginUser loginUser) {
         return new ResponseEntity<>(ApiResult.success(commentService.updateComment(postId, commentId, commentModifyReqDto, loginUser)), HttpStatus.OK);
     }
+
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<ApiResult<CommentDeleteRespDto>> deleteComment(@PathVariable(name = "postId") Long postId,
-                                                                         @PathVariable(name="commentId") Long commentId,
+                                                                         @PathVariable(name = "commentId") Long commentId,
                                                                          @AuthenticationPrincipal LoginUser loginUser) {
-        return new ResponseEntity<>(ApiResult.success(commentService.deleteComment(postId,commentId,loginUser)), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResult.success(commentService.deleteComment(postId, commentId, loginUser)), HttpStatus.OK);
     }
 
 }

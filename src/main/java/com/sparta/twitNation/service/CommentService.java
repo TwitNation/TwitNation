@@ -21,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommentService {
+
     private final PostRepository postRepository;
+
     private final CommentRepository commentRepository;
 
     @Transactional
@@ -33,12 +35,12 @@ public class CommentService {
         }
 
         Post post = postRepository.findById(postId).orElseThrow(
-                ()->new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
         );
 
-        Comment comment = commentRepository.save(commentReqDto.toEntity(post,loginUser.getUser()));
+        Comment comment = commentRepository.save(commentReqDto.toEntity(post, loginUser.getUser()));
 
-        return new CommentCreateRespDto(comment.getPost().getId() ,comment.getId());
+        return new CommentCreateRespDto(comment.getPost().getId(), comment.getId());
     }
 
     @Transactional
@@ -51,23 +53,23 @@ public class CommentService {
         }
 
         Post post = postRepository.findById(postId).orElseThrow(
-                ()->new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
         );
 
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                ()->new CustomApiException("댓글을 찾을 수 없습니다",HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException("댓글을 찾을 수 없습니다", HttpStatus.NOT_FOUND.value())
         );
 
         if (!comment.getUser().getId().equals(userId)) {
-            throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다",HttpStatus.UNAUTHORIZED.value());
+            throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다", HttpStatus.UNAUTHORIZED.value());
         }
 
-        comment.modify(commentModifyReqDto);
+        comment.modify(commentModifyReqDto.content());
 
         commentRepository.saveAndFlush(comment);
 
-        return new CommentModifyRespDto(comment.getPost().getId(),comment.getId(),comment.getLastModifiedAt());
+        return new CommentModifyRespDto(comment.getPost().getId(), comment.getId(), comment.getLastModifiedAt());
     }
 
     @Transactional
@@ -79,15 +81,15 @@ public class CommentService {
         }
 
         Post post = postRepository.findById(postId).orElseThrow(
-                ()->new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
         );
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                ()->new CustomApiException("댓글을 찾을 수 없습니다",HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException("댓글을 찾을 수 없습니다", HttpStatus.NOT_FOUND.value())
         );
 
         if (!comment.getUser().getId().equals(userId)) {
-            throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다",HttpStatus.UNAUTHORIZED.value());
+            throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다", HttpStatus.UNAUTHORIZED.value());
         }
 
         commentRepository.deleteById(comment.getId());
