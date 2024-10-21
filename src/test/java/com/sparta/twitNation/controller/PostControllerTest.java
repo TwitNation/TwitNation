@@ -75,7 +75,7 @@ class PostControllerTest extends DummyObject {
     @BeforeEach
     void setUp() {
         String password = "password";
-        User user = User.builder().id(1L).nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
+        User user = newUser();
         userRepository.save(user);
         Post post = newPost(user);
         postRepository.save(post);
@@ -145,8 +145,7 @@ class PostControllerTest extends DummyObject {
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("responseBody = " + responseBody);
     }
-
-    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION )
     @Test
     void success_modifyPost_test() throws Exception {
         //given
