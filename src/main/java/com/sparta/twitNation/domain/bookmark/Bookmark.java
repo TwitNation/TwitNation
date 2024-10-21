@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "bookmarks")
 public class Bookmark extends BaseEntity {
 
+    private boolean isBookmarked;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,4 +28,11 @@ public class Bookmark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    // 명시적인 생성자 추가
+    public Bookmark(Post post,boolean isBookmarked) {
+        this.post = post;
+//        this.user = user;
+        this.isBookmarked = isBookmarked;
+    }
 }

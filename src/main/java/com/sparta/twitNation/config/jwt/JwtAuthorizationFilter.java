@@ -31,6 +31,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
+            if(request.getServletPath().startsWith("/api/bookmarks")){
+                chain.doFilter(request,response);
+                return;
+            }
             if (!isAuthorizationHeaderValid(request)) {
                 throw new CustomJwtException(HttpStatus.UNAUTHORIZED.value(), "유효하지 않거나 Authorization 헤더가 누락되었습니다");
             }
