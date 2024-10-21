@@ -8,6 +8,7 @@ import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.dto.comment.req.CommentCreateReqDto;
 import com.sparta.twitNation.dto.comment.req.CommentModifyReqDto;
 import com.sparta.twitNation.dto.comment.resp.CommentCreateRespDto;
+import com.sparta.twitNation.dto.comment.resp.CommentDeleteRespDto;
 import com.sparta.twitNation.dto.comment.resp.CommentModifyRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +70,28 @@ public class CommentService {
         return new CommentModifyRespDto(comment.getPost().getId(),comment.getId(),comment.getLastModifiedAt());
     }
 
+    @Transactional
+    public CommentDeleteRespDto deleteComment(Long postId, Long commentId, LoginUser loginUser) {
+        Long userId = loginUser.getUser().getId();
 
+        if (userId == null) {
+            throw new CustomApiException("인증 정보가 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
+        }
+
+        Post post = postRepository.findById(postId).orElseThrow(
+                ()->new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
+        );
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                ()->new CustomApiException("댓글을 찾을 수 없습니다",HttpStatus.NOT_FOUND.value())
+        );
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다",HttpStatus.UNAUTHORIZED.value());
+        }
+
+        commentRepository.deleteById(comment.getId());
+
+        return new CommentDeleteRespDto(comment.getId(), true);
+    }
 }

@@ -4,6 +4,7 @@ import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.comment.req.CommentCreateReqDto;
 import com.sparta.twitNation.dto.comment.req.CommentModifyReqDto;
 import com.sparta.twitNation.dto.comment.resp.CommentCreateRespDto;
+import com.sparta.twitNation.dto.comment.resp.CommentDeleteRespDto;
 import com.sparta.twitNation.dto.comment.resp.CommentModifyRespDto;
 import com.sparta.twitNation.service.CommentService;
 import com.sparta.twitNation.util.api.ApiResult;
@@ -36,6 +37,12 @@ public class CommentController {
                                                                          @RequestBody @Valid CommentModifyReqDto commentModifyReqDto,
                                                                          @AuthenticationPrincipal LoginUser loginUser) {
         return new ResponseEntity<>(ApiResult.success(commentService.updateComment(postId, commentId, commentModifyReqDto, loginUser)), HttpStatus.OK);
+    }
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<ApiResult<CommentDeleteRespDto>> deleteComment(@PathVariable(name = "postId") Long postId,
+                                                                         @PathVariable(name="commentId") Long commentId,
+                                                                         @AuthenticationPrincipal LoginUser loginUser) {
+        return new ResponseEntity<>(ApiResult.success(commentService.deleteComment(postId,commentId,loginUser)), HttpStatus.OK);
     }
 
 }
