@@ -5,6 +5,7 @@ import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,12 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Comment(String content, User user, Post post, Long id) {
+        this.content = content;
+        this.user = user;
+        this.post = post;
+        this.id = id;
+    }
 }
