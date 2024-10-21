@@ -8,9 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +18,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/auth/join")
-    public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(@RequestBody @Valid UserCreateReqDto dto) {
+    public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
+            @RequestPart @Valid UserCreateReqDto dto,
+            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
+            ) {
+
+        String profileImgUrl = null;
+        // S3 생성 로직 ...
+
         UserCreateRespDto RespDto = userService.register(dto);
         ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
