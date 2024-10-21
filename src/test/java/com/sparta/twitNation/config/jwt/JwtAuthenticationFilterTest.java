@@ -43,7 +43,7 @@ class JwtAuthenticationFilterTest {
     @BeforeEach
     public void setUp() throws  Exception{
         String password = "password";
-        User user = User.builder().id(1L).username("userA").nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
+        User user = User.builder().id(1L).nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
         userRepository.save(user);
     }
 
@@ -69,7 +69,7 @@ class JwtAuthenticationFilterTest {
         resultActions.andExpect(status().isOk());
         assertNotNull(jwtToken);
         assertTrue(jwtToken.startsWith(JwtVo.TOKEN_PREFIX));
-        resultActions.andExpect(jsonPath("$.data.username").value("username"));
+        resultActions.andExpect(jsonPath("$.data.username").value("userA"));
     }
 
     @Test
