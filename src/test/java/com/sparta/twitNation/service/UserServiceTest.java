@@ -28,7 +28,7 @@ class UserServiceTest {
     UserService userService;
 
     @Test
-    void createSuccessTest(){
+    void createSuccessTest() {
         // given
         UserCreateReqDto dto = new UserCreateReqDto("asdf@naver.com", "1234", "Spring", "hello word!", null);
         String password = dto.password();

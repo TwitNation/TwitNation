@@ -33,6 +33,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             if (request.getRequestURI().equals("/auth/join")) {
+
                 chain.doFilter(request, response);
                 return;
             }
