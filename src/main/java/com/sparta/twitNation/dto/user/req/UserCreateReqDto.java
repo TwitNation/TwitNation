@@ -10,7 +10,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 @Setter
 public record UserCreateReqDto(
         @NotBlank(message = "이메일을 입력헤주세요.")
