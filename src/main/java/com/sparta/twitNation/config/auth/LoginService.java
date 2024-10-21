@@ -16,8 +16,8 @@ public class LoginService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
                 .map(LoginUser::new)
                 .orElseThrow(() -> new InternalAuthenticationServiceException("인증 실패"));
     }
