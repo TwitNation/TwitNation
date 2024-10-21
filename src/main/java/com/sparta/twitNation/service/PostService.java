@@ -28,7 +28,7 @@ public class PostService {
     public PostCreateRespDto createPost(PostCreateReqDto postCreateReqDto, LoginUser loginUser){
         Long userId = loginUser.getUser().getId();
         if (userId == null) {
-            log.error("인증 실패: userId null");
+            log.error("인증 실패: userId is null");
             throw new CustomApiException("인증 정보가 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
         }
         User user = userRepository.findById(userId).orElseThrow(
