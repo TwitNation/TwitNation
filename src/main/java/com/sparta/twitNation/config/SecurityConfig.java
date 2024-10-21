@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,13 +32,13 @@ public class SecurityConfig {
     private final JwtProcess jwtProcess;
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         log.debug("디버그 : BCryptPasswordEncoder 빈 등록");
         return new BCryptPasswordEncoder();
     }
 
     //jwt 필터 등록 예정
-    public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity>{
+    public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
@@ -49,8 +50,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(0)
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.debug("디버그: filterChain 등록");
         http
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
@@ -59,26 +59,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //jwt 사용
                 .formLogin(AbstractHttpConfigurer::disable) //formLogin 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) //브라우저가 팝업창으로 사용자 인증 진행하는 것 비활성화
-                .with(new CustomSecurityFilterManager(), CustomSecurityFilterManager::getClass);
+                .with(new CustomSecurityFilterManager(), CustomSecurityFilterManager::getClass)
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/join").permitAll());
 
         return http.build();
     }
 
-    /**
-     * 마지막에 추가
-     */
-    @Bean
-    @Order(1)
-    public SecurityFilterChain HttpRequestFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/auth/**").permitAll()
-                                .anyRequest().authenticated()
-                );
-        return http.build();
-    }
-
-    public CorsConfigurationSource configurationSource(){
+    public CorsConfigurationSource configurationSource() {
         log.debug("디버그: filterChain에 configurationSource cors 설정 등록");
 
         CorsConfiguration configuration = new CorsConfiguration();
