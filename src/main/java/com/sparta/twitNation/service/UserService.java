@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -18,6 +20,8 @@ public class UserService {
     public UserCreateRespDto register(UserCreateReqDto dto) {
         String encodedPassword = passwordEncoder.encode(dto.password());
         User user = new User(dto.passwordEncoded(encodedPassword));
+        Optional<User> userOP = userRepository.findByEmail(user.getEmail());
+
         return new UserCreateRespDto(userRepository.save(user).getId());
     }
 
