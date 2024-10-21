@@ -28,11 +28,12 @@ class UserServiceTest {
     UserService userService;
 
     @Test
-    void createSuccessTest(){
+    void createSuccessTest() {
         // given
         UserCreateReqDto dto = new UserCreateReqDto("asdf@naver.com", "1234", "Spring", "hello word!", null);
         String password = dto.password();
-        User user = new User(dto, password);
+        UserCreateReqDto reqDto = dto.passwordEncoded(password);
+        User user = new User(reqDto);
 
         // studding
         when(passwordEncoder.encode(password)).thenReturn("1234");
