@@ -33,4 +33,8 @@ public record UserCreateReqDto(
     public UserCreateReqDto withProfileImg(String profileImg) {
         return new UserCreateReqDto(this.email, this.password, this.nickname, this.bio, profileImg);
     }
+
+    public UserCreateReqDto passwordEncoded(String password) {
+        return new UserCreateReqDto(this.email, this.password, this.nickname, this.bio, this.profileImg);
+    }
 }
