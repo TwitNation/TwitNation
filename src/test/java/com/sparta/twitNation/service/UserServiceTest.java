@@ -9,9 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +39,7 @@ class UserServiceTest {
         when(userRepository.save(any())).thenReturn(user);
 
         // when
-        UserCreateRespDto respDto = userService.addUser(dto);
+        UserCreateRespDto respDto = userService.register(dto);
 
         // then
         assertThat(respDto).isNotNull();
