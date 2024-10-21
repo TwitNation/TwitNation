@@ -1,6 +1,7 @@
 package com.sparta.twitNation.domain.user;
 
 import com.sparta.twitNation.domain.base.BaseEntity;
+import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,14 @@ public class User extends BaseEntity {
     public User(Long id, String email, String password) {
         this.id = id;
         this.email = email;
+        this.password = password;
+    }
+
+    public User(UserCreateReqDto dto, String password) {
+        this.email = dto.email();
+        this.bio = dto.bio();
+        this.profileImg = dto.profileImg();
+        this.nickname = dto.nickname();
         this.password = password;
     }
 }
