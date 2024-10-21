@@ -20,7 +20,7 @@ public class UserController {
 
     @PostMapping("/auth/join")
     public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(@RequestBody @Valid UserCreateReqDto dto) {
-        UserCreateRespDto RespDto = userService.addUser(dto);
+        UserCreateRespDto RespDto = userService.register(dto);
         ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }
