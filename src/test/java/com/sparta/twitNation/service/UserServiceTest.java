@@ -49,5 +49,4 @@ class UserServiceTest {
         verify(passwordEncoder, times(1)).encode(any());
         verify(userRepository, times(1)).save(any());
     }
-
 }
