@@ -1,20 +1,14 @@
 package com.sparta.twitNation.controller;
 
 import com.sparta.twitNation.config.auth.LoginUser;
-import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.dto.bookmark.resp.BookmarkCreateRespDto;
+import com.sparta.twitNation.dto.bookmark.resp.BookmarkViewRespDto;
 import com.sparta.twitNation.service.BookmarkService;
 import com.sparta.twitNation.util.api.ApiResult;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.attribute.UserPrincipal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -36,6 +30,18 @@ public class BookmarkController {
 
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.CREATED);
         //return new ResponseEntity<>(ApiResult.success(bookmarkService.createBookmark(postId, userId)), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/bookmarks")
+    public ResponseEntity<BookmarkViewRespDto> getBookmarks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ){
+        User user = User.createTestUser();
+        LoginUser loginUser = new LoginUser(user);
+        BookmarkViewRespDto response = bookmarkService.getBookmarks(page, limit, loginUser);
+        return ResponseEntity.ok(response);
+
     }
 
 

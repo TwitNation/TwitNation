@@ -3,17 +3,26 @@ package com.sparta.twitNation.service;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.bookmark.Bookmark;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.comment.CommentRepository;
+import com.sparta.twitNation.domain.like.LikeRespository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
+import com.sparta.twitNation.dto.bookmark.req.BookmarkPostDto;
 import com.sparta.twitNation.dto.bookmark.resp.BookmarkCreateRespDto;
+import com.sparta.twitNation.dto.bookmark.resp.BookmarkViewRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +32,10 @@ public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final LikeRespository likeRespository;
+    private final RetweetRepository retweetRepository;
+    private final CommentRepository commentRepository;
+
 
 
 
@@ -57,5 +70,45 @@ public class BookmarkService {
         }
 
         return new BookmarkCreateRespDto(postId, isBookmarked);
+    }
+
+
+
+    public BookmarkViewRespDto getBookmarks(int page, int limit, LoginUser loginUser) {
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        // 로그인한 사용자의 ID를 가져옴
+        Long userId = loginUser.getUser().getId();
+
+        // 북마크 목록을 조회하고, 관련된 게시글 정보를 가져옵니다.
+       // Page<Bookmark> bookmarks = bookmarkRepository.findAll(pageRequest);
+        Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(userId, pageRequest);
+
+
+        List<BookmarkPostDto> posts = bookmarks.getContent().stream()
+                .map(bookmark -> {
+                    Post post = bookmark.getPost();
+
+
+                    return new BookmarkPostDto(
+                            post.getUser().getNickname(), // 닉네임
+                            post.getUser().getProfileImg(), // 프로필 이미지
+                            post.getContent(), // 게시글 내용
+                            post.getLastModifiedAt() // 수정일
+//                        like.getLikeCount(), // 좋아요 수
+//                        retweet.getRetweetCount(), // 리트윗 수
+//                        comment.getCommentCount() // 댓글 수
+                    );
+                })
+                .collect(Collectors.toList());
+
+        return new BookmarkViewRespDto(
+                posts,
+                (int) bookmarks.getTotalElements(),
+                bookmarks.getNumber(),
+                bookmarks.hasNext() ? bookmarks.getNumber() + 1 : -1,
+                bookmarks.hasNext(),
+                bookmarks.getSize()
+        );
     }
 }
