@@ -35,7 +35,6 @@ public class DummyObject {
         String password = "password1234";
         return User.builder()
                 .id(1L)
-                .username("userA")
                 .nickname("userAAA")
                 .email("userA@email.com")
                 .password(passwordEncoder.encode(password))

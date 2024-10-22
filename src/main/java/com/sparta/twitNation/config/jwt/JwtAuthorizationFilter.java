@@ -23,6 +23,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final JwtProcess jwtProcess;
+
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess) {
         super(authenticationManager);
         this.jwtProcess = jwtProcess;
@@ -31,6 +32,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
+            if (request.getRequestURI().equals("/auth/join")) {
+
+                chain.doFilter(request, response);
+                return;
+            }
+
             if (!isAuthorizationHeaderValid(request)) {
                 throw new CustomJwtException(HttpStatus.UNAUTHORIZED.value(), "유효하지 않거나 Authorization 헤더가 누락되었습니다");
             }
@@ -44,13 +51,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             chain.doFilter(request, response); //다시 체인
-        }catch(CustomJwtException e){
+        } catch (CustomJwtException e) {
             log.warn("JWT 검증 실패: {}", e.getMessage());
             throw e;
         }
     }
 
-    private boolean isAuthorizationHeaderValid(HttpServletRequest request){
+    private boolean isAuthorizationHeaderValid(HttpServletRequest request) {
         String header = request.getHeader(JwtVo.HEADER);
         return header != null && header.startsWith(JwtVo.TOKEN_PREFIX);
     }

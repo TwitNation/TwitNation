@@ -14,20 +14,21 @@ import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
+import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
+import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PostService {
 
@@ -37,10 +38,12 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final RetweetRepository retweetRepository;
     private final BookmarkRepository bookmarkRepository;
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    // 게시물 생성
     @Transactional
-    public PostCreateRespDto createPost(PostCreateReqDto postCreateReqDto, LoginUser loginUser){
+    public PostCreateRespDto createPost(PostCreateReqDto postCreateReqDto, LoginUser loginUser) {
         Long userId = loginUser.getUser().getId();
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.USER_NOT_FOUND)
@@ -49,8 +52,9 @@ public class PostService {
         return new PostCreateRespDto(post);
     }
 
+    // 게시물 수정
     @Transactional
-    public PostModifyRespDto modifyPost(PostModifyReqDto postModifyReqDto, Long postId, LoginUser loginUser){
+    public PostModifyRespDto modifyPost(PostModifyReqDto postModifyReqDto, Long postId, LoginUser loginUser) {
         Long userId = loginUser.getUser().getId();
         userRepository.findById(userId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.USER_NOT_FOUND)
@@ -102,5 +106,23 @@ public class PostService {
     }
 
 
+    // 특정 유저의 게시물 조회
+    @Transactional(readOnly = true)
+    public UserPostsRespDto readPostsBy(final Long userId, final int page, final int limit) {
+        final User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND));
+        final Page<Post> posts = postRepository.findByUser(user,
+                PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
 
+
+        final Page<PostReadPageRespDto> response = posts.map(
+                post -> {
+                    final int likeCount = likeRepository.countByPost(post);
+                    final int commentCount = commentRepository.countByPost(post);
+                    final int retweetCount = retweetRepository.countByPost(post);
+                    return PostReadPageRespDto.from(user, post, likeCount, commentCount, retweetCount);
+                });
+
+        return UserPostsRespDto.from(response);
+    }
 }

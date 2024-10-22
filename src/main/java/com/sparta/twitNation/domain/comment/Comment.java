@@ -3,6 +3,7 @@ package com.sparta.twitNation.domain.comment;
 import com.sparta.twitNation.domain.base.BaseEntity;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.user.User;
+import com.sparta.twitNation.dto.comment.req.CommentModifyReqDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -36,5 +37,16 @@ public class Comment extends BaseEntity {
         this.content = content;
         this.post = post;
         this.user = user;
+    }
+
+
+    public void modify(String content) {
+        if (content != null) {
+            this.content = content;
+        }
+    }
+
+    public boolean isWrittenBy(Long userId) {
+        return this.user.getId().equals(userId);
     }
 }
