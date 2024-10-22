@@ -4,6 +4,7 @@ import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
+import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,13 @@ public class UserService {
         }
 
         return new UserCreateRespDto(userRepository.save(user).getId());
+    }
+
+    public UserEditPageRespDto editList(Long userId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        return new UserEditPageRespDto(findUser);
     }
 
 
