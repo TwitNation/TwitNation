@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.sparta.twitNation.ex.ErrorCode.POST_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -47,7 +49,7 @@ public class BookmarkService {
 
         //게시글 존재 여부
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomApiException("존재하지 않는 게시글입니다.", 404));
+                .orElseThrow(() -> new CustomApiException(POST_NOT_FOUND));
 
 
 

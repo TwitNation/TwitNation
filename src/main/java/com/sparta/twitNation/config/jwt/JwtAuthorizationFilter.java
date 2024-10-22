@@ -1,7 +1,9 @@
 package com.sparta.twitNation.config.jwt;
 
 import com.sparta.twitNation.config.auth.LoginUser;
+import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.CustomJwtException;
+import com.sparta.twitNation.ex.ErrorCode;
 import com.sparta.twitNation.util.CustomUtil;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.servlet.FilterChain;
@@ -38,13 +40,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
             if (request.getRequestURI().equals("/auth/join")) {
 
+            if(request.getRequestURI().contains("auth")) {
                 chain.doFilter(request, response);
                 return;
             }
 
             if (!isAuthorizationHeaderValid(request)) {
-                throw new CustomJwtException(HttpStatus.UNAUTHORIZED.value(), "유효하지 않거나 Authorization 헤더가 누락되었습니다");
+                throw new CustomApiException(ErrorCode.TOKEN_MISSING);
             }
+
             log.debug("디버그: 토큰 존재");
             String token = request.getHeader(JwtVo.HEADER).replace(JwtVo.TOKEN_PREFIX, ""); //Bearer 제거
 
@@ -53,10 +57,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("시큐리티 컨텍스트: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
             chain.doFilter(request, response); //다시 체인
-        } catch (CustomJwtException e) {
+        } catch (CustomJwtException  e) {
             log.warn("JWT 검증 실패: {}", e.getMessage());
+            throw e;
+        } catch(CustomApiException e){
+            log.warn("헤더 누락: {}", e.getMessage());
             throw e;
         }
     }

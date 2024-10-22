@@ -1,5 +1,6 @@
 package com.sparta.twitNation.config.jwt;
 
+import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.CustomJwtException;
 import com.sparta.twitNation.util.CustomUtil;
 import com.sparta.twitNation.util.api.ApiResult;
@@ -19,6 +20,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }catch (CustomJwtException e){
             setErrorResponse(e.getStatus(), response, e.getMessage());
+        }catch(CustomApiException e){
+            setErrorResponse(e.getErrorCode().getStatus(), response, e.getMessage());
         }
     }
     private void setErrorResponse(int status, HttpServletResponse response, String message) throws IOException {
