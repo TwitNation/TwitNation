@@ -59,9 +59,9 @@ public class CommentService {
 
         comment.modify(commentModifyReqDto.content());
 
-        commentRepository.save(comment);
+        Comment updatedComment = commentRepository.saveAndFlush(comment);
 
-        return new CommentModifyRespDto(comment.getPost().getId(), comment.getId(), comment.getLastModifiedAt());
+        return new CommentModifyRespDto(updatedComment.getPost().getId(), updatedComment.getId(), updatedComment.getLastModifiedAt());
     }
 
     @Transactional
