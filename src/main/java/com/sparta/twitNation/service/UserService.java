@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -27,7 +29,6 @@ public class UserService {
     public UserCreateRespDto register(UserCreateReqDto dto) {
         String encodedPassword = passwordEncoder.encode(dto.password());
         User user = new User(dto.passwordEncoded(encodedPassword));
-<<<<<<< HEAD
         Optional<User> userOP = userRepository.findByEmail(user.getEmail());
         if (userOP.isPresent()) {
             throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
@@ -36,9 +37,6 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return new UserCreateRespDto(savedUser.getId(), savedUser.getEmail());
-=======
-        return new UserCreateRespDto(userRepository.save(user).getId());
->>>>>>> d6d151f (#13 refactor(User, UserService, dto) : refacoring)
     }
 
     public UserEditPageRespDto editList(Long userId) {
