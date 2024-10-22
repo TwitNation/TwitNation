@@ -18,10 +18,10 @@ public class BookmarkPostDto {
 //    private int commentCount; // 게시글 댓글 수
 
     public BookmarkPostDto(String userNickname, String userProfileImg, String content, LocalDateTime lastModifiedAt) {
-        this.userNickname = getUserNickname();
-        this.userProfileImg = getUserProfileImg();
-        this.content = getContent();
-        this.lastModifiedAt = getLastModifiedAt();
+        this.userNickname = userNickname;
+        this.userProfileImg = userProfileImg;
+        this.content = content;
+        this.lastModifiedAt = lastModifiedAt;
 //        this.likeCount = getLikeCount();
 //        this.retweetCount = getRetweetCount();
 //        this.commentCount = getCommentCount();
