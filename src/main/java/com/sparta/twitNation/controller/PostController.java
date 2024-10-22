@@ -3,10 +3,7 @@ package com.sparta.twitNation.controller;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
-import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
-import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
-import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
-import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
+import com.sparta.twitNation.dto.post.resp.*;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
@@ -56,6 +53,11 @@ public class PostController {
     ) {
         final UserPostsRespDto response = postService.readPostsBy(userId, page, limit);
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<ApiResult<PostDetailRespDto>> getPostById(@PathVariable(value = "postId")Long postId, @AuthenticationPrincipal LoginUser loginUser){
+        return new ResponseEntity<>(ApiResult.success(postService.getPostById(postId, loginUser)),HttpStatus.OK);
     }
 }
 
