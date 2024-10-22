@@ -71,7 +71,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public UserPostsRespDto readPostsBy(final Long userId, final int page, final int limit) {
         final User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomApiException("존재하지 않는 유저입니다", HttpStatus.NOT_FOUND.value()));
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND));
         final Page<Post> posts = postRepository.findByUser(user,
                 PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
 
