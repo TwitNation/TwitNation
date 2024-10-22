@@ -1,13 +1,19 @@
 package com.sparta.twitNation.controller;
 
+import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.dto.bookmark.resp.BookmarkCreateRespDto;
 import com.sparta.twitNation.service.BookmarkService;
 import com.sparta.twitNation.util.api.ApiResult;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
 @RestController
@@ -20,13 +26,13 @@ public class BookmarkController {
     }
 
     @PostMapping("/bookmarks/{postId}")
-    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId) {
-        //BookmarkCreateRespDto response = bookmarkService.createBookmark(postId);
-        return new ResponseEntity<>(ApiResult.success(bookmarkService.createBookmark(postId)), HttpStatus.CREATED);
+    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser) {
+        // Bookmark 생성
+        BookmarkCreateRespDto response = bookmarkService.createBookmark(postId, loginUser);
+
+        return new ResponseEntity<>(ApiResult.success(response), HttpStatus.CREATED);
+        //return new ResponseEntity<>(ApiResult.success(bookmarkService.createBookmark(postId, userId)), HttpStatus.CREATED);
     }
 
-//    @GetMapping("/bookmarks")
-//    public ResponseEntity<ApiResult<List<BookmarkCreateRespDto>>> getAllBookmarks(@PathVariable(name = "userId")Long userId) {
-//        return new ResponseEntity<>(ApiResult.success(bookmarkService.getAllBookmarks(userId)), HttpStatus.OK);
-//    }
+
 }

@@ -5,6 +5,7 @@ import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,7 +38,11 @@ public class Bookmark extends BaseEntity {
         this.isBookmarked = isBookmarked;
     }
 
-    public void modify(boolean isBookmarked) {
+    // User를 포함한 명시적인 생성자 추가
+    @Builder
+    public Bookmark(Post post, User user, boolean isBookmarked) {
+        this.post = post;
+        this.user = user;
         this.isBookmarked = isBookmarked;
     }
 

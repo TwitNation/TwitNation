@@ -1,12 +1,12 @@
 package com.sparta.twitNation.service;
 
+import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.bookmark.Bookmark;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
-import com.sparta.twitNation.dto.bookmark.req.BookmarkCreateReqDto;
 import com.sparta.twitNation.dto.bookmark.resp.BookmarkCreateRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import lombok.RequiredArgsConstructor;
@@ -27,22 +27,31 @@ public class BookmarkService {
 
 
     @Transactional
-    public BookmarkCreateRespDto createBookmark(Long postId) {
+    public BookmarkCreateRespDto createBookmark(Long postId, LoginUser loginuser) {
 
         //게시글 존재 여부
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomApiException("존재하지 않는 게시글입니다.", 404));
 
+        //사용자 존재 여부
+        User user = loginuser.getUser();
+        if(user == null){
+            throw new CustomApiException("존재하지 않는 사용자입니다.", 401);
+        }
+
+        Long userId = loginuser.getUser().getId();
 
 
-        Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostId(postId);
+
+
+        Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostIdAndUserId(postId, userId);
         boolean isBookmarked;
 
         if (existingBookmark.isPresent()) {
             bookmarkRepository.delete(existingBookmark.get());
             isBookmarked = false;
         } else {
-            Bookmark bookmark = new Bookmark(post, true); // 수정된 생성자 사용
+            Bookmark bookmark = new Bookmark(post, loginuser.getUser(),true); // 수정된 생성자 사용
             bookmarkRepository.save(bookmark);
             isBookmarked = true;
         }
