@@ -1,27 +1,20 @@
-package com.sparta.twitNation.domain.retweet;
+package com.sparta.twitNation.domain.like;
+
 
 import com.sparta.twitNation.domain.post.Post;
-import com.sparta.twitNation.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.util.Optional;
-
 
 @Repository
-
-public interface RetweetRepository extends JpaRepository<Retweet, Long> {
+public interface LikeRepository extends JpaRepository<Like, Long> {
 
     @Modifying
-    @Query("delete from Retweet r where r.post.id = :postId")
-    int deleteRetweetsByPostId(@Param(value = "postId") Long postId);
+    @Query("delete from Like l where l.post.id = :postId")
+    int deleteLikesByPostId(@Param(value = "postId") Long postId);
 
     @Query("SELECT COUNT(l) FROM Like l WHERE l.post = :post")
     int countByPost(@Param("post") final Post post);
-
-
-    Optional<Retweet> findByPostAndUser(Post post, User user);
-
 }

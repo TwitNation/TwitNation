@@ -9,15 +9,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "bookmarks")
 public class Bookmark extends BaseEntity {
-
-    //private boolean isBookmarked;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +37,10 @@ public class Bookmark extends BaseEntity {
         this.user = user;
     }
 
-
-
-
+    @Builder
+    public Bookmark(Long id, Post post, User user) {
+        this.id = id;
+        this.post = post;
+        this.user = user;
+    }
 }
