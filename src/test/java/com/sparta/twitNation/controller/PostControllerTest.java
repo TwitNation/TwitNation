@@ -28,7 +28,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
@@ -74,8 +73,9 @@ class PostControllerTest extends DummyObject {
     private String token;
 
     @BeforeEach
-    void setUp(){
-        User user = newUser();
+    void setUp() {
+        String password = "password";
+        User user = User.builder().id(1L).nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
         userRepository.save(user);
         Post post = newPost(user);
         postRepository.save(post);
@@ -87,7 +87,7 @@ class PostControllerTest extends DummyObject {
         token = jwtProcess.create(loginUser);
     }
 
-    @WithUserDetails(value = "userA",setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void success_createPost_test() throws Exception {
 
@@ -106,7 +106,7 @@ class PostControllerTest extends DummyObject {
         System.out.println("responseBody = " + responseBody);
     }
 
-    @WithUserDetails(value = "userA",setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void fail_createPost_invalid_length_test() throws Exception {
 
@@ -126,7 +126,7 @@ class PostControllerTest extends DummyObject {
         System.out.println("responseBody = " + responseBody);
     }
 
-    @WithUserDetails(value = "userA",setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void fail_createPost_invalid_notBlank_test() throws Exception {
 
@@ -145,7 +145,8 @@ class PostControllerTest extends DummyObject {
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("responseBody = " + responseBody);
     }
-    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION )
+
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void success_modifyPost_test() throws Exception {
         //given
