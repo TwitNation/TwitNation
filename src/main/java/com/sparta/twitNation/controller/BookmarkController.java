@@ -26,7 +26,11 @@ public class BookmarkController {
     }
 
     @PostMapping("/bookmarks/{postId}")
-    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId) {
+
+        User user = User.createTestUser();
+        LoginUser loginUser = new LoginUser(user);
+
         // Bookmark 생성
         BookmarkCreateRespDto response = bookmarkService.createBookmark(postId, loginUser);
 
