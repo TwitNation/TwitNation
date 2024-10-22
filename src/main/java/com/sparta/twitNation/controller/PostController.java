@@ -17,7 +17,7 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/api/users/profile/{userId}/posts")
+    @GetMapping("/api/posts/{userId}")
     public ResponseEntity<ApiResult<UserPostsRespDto>> readPostByUser(
             @PathVariable final Long userId,
             @RequestParam(defaultValue = "0", value = "page") int page,
