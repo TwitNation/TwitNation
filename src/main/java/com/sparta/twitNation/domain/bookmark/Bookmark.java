@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -32,7 +34,12 @@ public class Bookmark extends BaseEntity {
     // 명시적인 생성자 추가
     public Bookmark(Post post,boolean isBookmarked) {
         this.post = post;
-//        this.user = user;
         this.isBookmarked = isBookmarked;
     }
+
+    public void modify(boolean isBookmarked) {
+        this.isBookmarked = isBookmarked;
+    }
+
+
 }
