@@ -13,7 +13,6 @@ public enum ErrorCode {
     COMMENT_FORBIDEN(403,"해당 댓글을 수정할 권한이 없습니다."),
     COMMENT_NOT_FOUND(404, "존재하지 않는 댓글입니다."),
     ALREADY_USER_EXIST(400, "존재하는 사용자입니다.");
-
     private final int status;
     private final String message;
 
