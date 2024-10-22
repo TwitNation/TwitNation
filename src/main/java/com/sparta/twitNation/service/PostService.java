@@ -88,7 +88,8 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostsReadPageRespDto readPosts(final int page, final int limit) {
-        final Page<Post> posts = postRepository.findAll(PageRequest.of(page, limit));
+        final Page<Post> posts = postRepository.findAll(
+                PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
 
         final Page<PostsReadRespDto> postsResponse = posts.map(
                 post -> {
