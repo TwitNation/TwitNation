@@ -5,13 +5,20 @@ import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.config.jwt.JwtProcess;
 import com.sparta.twitNation.config.jwt.JwtVo;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.comment.Comment;
 import com.sparta.twitNation.domain.comment.CommentRepository;
+import com.sparta.twitNation.domain.like.Like;
+import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PageDetailWithUser;
+import com.sparta.twitNation.domain.retweet.Retweet;
+import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
+import com.sparta.twitNation.dto.post.resp.PostDetailRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.dummy.DummyObject;
 import jakarta.persistence.EntityManager;
@@ -29,6 +36,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
@@ -71,16 +82,26 @@ class PostControllerTest extends DummyObject {
     @Autowired
     private BookmarkRepository bookmarkRepository;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
+    private RetweetRepository retweetRepository;
+
     private String token;
+
+    private LoginUser loginUser;
+    private User mockUser;
+    private Post mockPost;
 
     @BeforeEach
     void setUp(){
         User user = newUser();
-        userRepository.save(user);
+        mockUser = userRepository.save(user);
+
         Post post = newPost(user);
-        postRepository.save(post);
-        commentRepository.save(mockComment(post));
-        bookmarkRepository.save(mockBookmark(post));
+        mockPost = postRepository.save(post);
+
         em.clear();
 
         LoginUser loginUser = new LoginUser(user);
@@ -174,6 +195,30 @@ class PostControllerTest extends DummyObject {
                         .header(JwtVo.HEADER, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("responseBody = " + responseBody);
+    }
+
+
+    @Test
+    @WithUserDetails(value = "userA@email.com", setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    void success_getPostById_test() throws Exception {
+
+        PageDetailWithUser mockPostDetailWithUser = new PageDetailWithUser(mockPost.getId(), mockUser.getId(),
+                mockUser.getNickname(), mockPost.getContent(), mockPost.getLastModifiedAt(), mockUser.getProfileImg()
+        );
+        PostDetailRespDto mockResponse = new PostDetailRespDto(mockPostDetailWithUser, 0,0,0);
+
+
+        ResultActions resultActions = mvc.perform(get("/api/posts/{postId}", mockPost.getId())
+                        .header(JwtVo.HEADER, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.likeCount").value(0))
+                .andExpect(jsonPath("$.data.commentCount").value(0))
+                .andExpect(jsonPath("$.data.retweetCount").value(0))
+                .andExpect(jsonPath("$.data.postId").value(mockPost.getId()));
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("responseBody = " + responseBody);

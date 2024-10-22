@@ -45,9 +45,9 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(postService.deletePost(postId, loginUser)), HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<ApiResult<UserPostsRespDto>> readPostByUser(
-            @PathVariable final Long userId,
+            @PathVariable(value = "userId") final Long userId,
             @RequestParam(defaultValue = "0", value = "page") int page,
             @RequestParam(defaultValue = "10", value = "limit") int limit
     ) {
