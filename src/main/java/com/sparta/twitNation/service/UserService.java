@@ -10,6 +10,7 @@ import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public UserCreateRespDto register(UserCreateReqDto dto) {
         String encodedPassword = passwordEncoder.encode(dto.password());
         User user = new User(dto.passwordEncoded(encodedPassword));
