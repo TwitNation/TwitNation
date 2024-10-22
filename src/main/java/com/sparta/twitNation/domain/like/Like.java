@@ -6,6 +6,7 @@ import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,12 @@ public class Like extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+
+    @Builder
+    public Like(Long id, Post post, User user) {
+        this.id = id;
+        this.post = post;
+        this.user = user;
+    }
 }

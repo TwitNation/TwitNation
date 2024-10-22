@@ -1,15 +1,22 @@
 package com.sparta.twitNation.service;
 
 import com.sparta.twitNation.config.auth.LoginUser;
+import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.comment.CommentRepository;
+import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
+import com.sparta.twitNation.ex.ErrorCode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,8 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -37,6 +43,29 @@ class PostServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private CommentRepository commentRepository;
+
+    @Mock
+    private BookmarkRepository bookmarkRepository;
+
+    @Mock
+    private LikeRepository likeRepository;
+
+    @Mock
+    private RetweetRepository retweetRepository;
+
+    private LoginUser loginUser;
+    private User mockUser;
+    private Post mockPost;
+
+    @BeforeEach
+    void setUp() {
+        mockUser = User.builder().id(1L).build();
+        loginUser = new LoginUser(mockUser);
+        mockPost = Post.builder().id(1L).user(mockUser).build();
+    }
 
     @Test
     void success_createPost_test(){
@@ -174,5 +203,39 @@ class PostServiceTest {
 
         assertThat(exception.getMessage()).isEqualTo("존재하지 않는 유저입니다");
         assertThat(exception.getErrorCode().getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    void success_deletePost_test() throws Exception{
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+        when(commentRepository.deleteCommentsByPostId(1L)).thenReturn(5);
+        when(likeRepository.deleteLikesByPostId(1L)).thenReturn(3);
+        when(retweetRepository.deleteRetweetsByPostId(1L)).thenReturn(2);
+        when(bookmarkRepository.deleteBookmarksByPostId(1L)).thenReturn(1);
+
+        PostDeleteRespDto result = postService.deletePost(mockPost.getId(), loginUser);
+
+        verify(userRepository).findById(1L);
+        verify(postRepository).findById(1L);
+        verify(commentRepository).deleteCommentsByPostId(1L);
+        verify(likeRepository).deleteLikesByPostId(1L);
+        verify(retweetRepository).deleteRetweetsByPostId(1L);
+        verify(bookmarkRepository).deleteBookmarksByPostId(1L);
+    }
+
+    @Test
+    void fail_deletePost_forbidden_test() {
+        User anotherUser = User.builder().id(2L).build();
+        LoginUser anotherLoginUser = new LoginUser(anotherUser);
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(anotherUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+
+        CustomApiException exception = assertThrows(CustomApiException.class, () -> {
+            postService.deletePost(1L, anotherLoginUser);
+        });
+
+        assertEquals(ErrorCode.POST_FORBIDDEN, exception.getErrorCode());
     }
 }
