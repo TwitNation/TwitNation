@@ -45,7 +45,7 @@ public class UserController {
     @PatchMapping("/api/user/profile")
     public ResponseEntity<ApiResult<UserUpdateRespDto>> updateUserInfo(
             @AuthenticationPrincipal LoginUser loginUser,
-            @RequestBody UserUpdateReqDto dto) {
+            @RequestBody @Valid UserUpdateReqDto dto) {
         UserUpdateRespDto respDto = userService.updateUser(loginUser.getId(), dto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
