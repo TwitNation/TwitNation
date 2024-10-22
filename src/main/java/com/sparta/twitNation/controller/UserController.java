@@ -27,7 +27,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/auth/join")
-    public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(@RequestBody @Valid UserCreateReqDto dto) {
+    public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
+            @RequestPart @Valid UserCreateReqDto dto,
+            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
+            ) {
+
+        String profileImgUrl = null;
+        // S3 생성 로직 ...
+
         UserCreateRespDto RespDto = userService.register(dto);
         ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
