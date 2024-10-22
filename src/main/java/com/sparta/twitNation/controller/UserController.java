@@ -36,7 +36,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }
 
-    @GetMapping("/api/user/profiile")
+    @GetMapping("/api/user/profile")
     public ResponseEntity<ApiResult<UserEditPageRespDto>> editPage(@AuthenticationPrincipal LoginUser loginUser) {
         UserEditPageRespDto dto = userService.editList(loginUser.getUser().getId());
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(dto));
