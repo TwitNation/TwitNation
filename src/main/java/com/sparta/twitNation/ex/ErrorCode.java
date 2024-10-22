@@ -1,6 +1,6 @@
 package com.sparta.twitNation.ex;
 
-
+import com.sparta.twitNation.service.UserService;
 import lombok.Getter;
 
 @Getter
