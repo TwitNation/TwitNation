@@ -1,16 +1,16 @@
 package com.sparta.twitNation.service;
 
+import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
+import com.sparta.twitNation.dto.user.req.UserDeleteReqDto;
 import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
-import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
-import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
-import com.sparta.twitNation.dto.user.resp.UserInfoRespDto;
-import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
+import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,5 +63,19 @@ public class UserService {
                 new CustomApiException(ErrorCode.USER_NOT_FOUND));
 
         return new UserInfoRespDto(findUser);
+    }
+
+    public UserDeleteRespDto deleteUser(UserDeleteReqDto dto, LoginUser loginUser) {
+        User findUser = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
+                new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(dto.password(), findUser.getPassword())) {
+            throw new CustomApiException(ErrorCode.MISS_MATCHER_PASSWORD);
+        }
+
+        userRepository.deleteById(findUser.getId());
+        SecurityContextHolder.clearContext();
+
+        return new UserDeleteRespDto(findUser.getId());
     }
 }
