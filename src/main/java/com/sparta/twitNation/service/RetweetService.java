@@ -32,7 +32,7 @@ public class RetweetService {
 
         Optional<Retweet> retweetOp = retweetRepository.findByPostAndUser(post, loginUser.getUser());
 
-        return retweetRepository.findByPostAndUser(post, loginUser.getUser())
+        return retweetOp
                 .map(retweet -> {
                     retweetRepository.delete(retweetOp.get());
                     return new RetweetToggleRespDto(postId, false);
