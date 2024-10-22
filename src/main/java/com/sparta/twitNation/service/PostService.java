@@ -76,21 +76,14 @@ public class PostService {
 
         validatePostOwner(post, userId);
 
-        //댓글 삭제
+        //댓글, 좋아요, 리트윗, 북마크 삭제
         int deletedCommentCnt = commentRepository.deleteCommentsByPostId(postId);
-        log.info("게시글 ID {}: 삭제된 댓글 개수 {}", postId, deletedCommentCnt);
-
-        //좋아요 삭제
         int deletedLikeCnt = likeRepository.deleteLikesByPostId(postId);
-        log.info("게시글 ID {}: 삭제된 좋아요 개수 {}", postId, deletedLikeCnt);
-
-        //리트윗 삭제
         int deletedRetweetCnt = retweetRepository.deleteRetweetsByPostId(postId);
-        log.info("게시글 ID {}: 삭제된 리트윗 개수 {}", postId, deletedRetweetCnt);
-
-        //북마크 삭제
         int deletedBookmarkCnt = bookmarkRepository.deleteBookmarksByPostId(postId);
-        log.info("게시글 ID {}: 삭제된 북마크 개수 {}", postId, deletedBookmarkCnt);
+
+        log.info("게시글 ID {}: 삭제된 댓글 {}, 좋아요 {}, 리트윗 {}, 북마크 {}",
+                postId, deletedCommentCnt, deletedLikeCnt, deletedRetweetCnt, deletedBookmarkCnt);
 
         //게시글 삭제
         postRepository.deleteById(postId);
