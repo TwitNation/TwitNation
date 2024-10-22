@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ObjectMapper om = new ObjectMapper();
             LoginReqDto loginReqDto = om.readValue(request.getInputStream(), LoginReqDto.class);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    loginReqDto.getUsername(), loginReqDto.getPassword()
+                    loginReqDto.getEmail(), loginReqDto.getPassword()
             );
             return authenticationManager.authenticate(authenticationToken);
         }catch (Exception e){
