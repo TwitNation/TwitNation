@@ -33,7 +33,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Builder
-    public User(Long id, String email, String nickname, String bio, String profileImg, String password) {
+    public User(Long id, String email, String password, String bio, String profileImg, String nickname) {
         this.id = id;
         this.email = email;
         this.bio = bio;
