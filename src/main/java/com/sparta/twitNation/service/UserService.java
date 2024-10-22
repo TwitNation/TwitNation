@@ -3,8 +3,10 @@ package com.sparta.twitNation.service;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
+import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
+import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,19 @@ public class UserService {
                 .orElseThrow(() -> new CustomApiException(ErrorCode.USER_NOT_FOUND));
 
         return new UserEditPageRespDto(findUser);
+    }
+
+    @Transactional
+    public UserUpdateRespDto updateUser(Long userId, UserUpdateReqDto dto) {
+        String password = dto.password();
+        String encodedPassword = passwordEncoder.encode(password);
+        UserUpdateReqDto reqDto = dto.passwordEncoded(encodedPassword);
+
+        User findUser = userRepository.findById(userId).orElseThrow(() ->
+                new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        findUser.changeInfo(reqDto);
+        return new UserUpdateRespDto(findUser);
     }
 
 
