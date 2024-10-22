@@ -5,6 +5,7 @@ import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsReadPageRespDto;
 import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
@@ -13,7 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +36,8 @@ public class PostController {
             @RequestBody @Valid PostCreateReqDto postCreateReqDto,
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return new ResponseEntity<>(ApiResult.success(postService.createPost(postCreateReqDto, loginUser)), HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResult.success(postService.createPost(postCreateReqDto, loginUser)),
+                HttpStatus.CREATED);
     }
 
     // 게시물 수정
@@ -38,16 +47,26 @@ public class PostController {
             @RequestBody @Valid PostModifyReqDto postModifyReqDto,
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)),
+                HttpStatus.OK);
     }
-  
-   @GetMapping("/{userId}")
+
+    @GetMapping("/{userId}")
     public ResponseEntity<ApiResult<UserPostsRespDto>> readPostByUser(
             @PathVariable final Long userId,
             @RequestParam(defaultValue = "0", value = "page") int page,
             @RequestParam(defaultValue = "10", value = "limit") int limit
     ) {
         final UserPostsRespDto response = postService.readPostsBy(userId, page, limit);
+        return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResult<PostsReadPageRespDto>> readPosts(
+            @RequestParam(defaultValue = "0", value = "page") int page,
+            @RequestParam(defaultValue = "10", value = "limit") int limit
+    ) {
+        final PostsReadPageRespDto response = postService.readPosts(page, limit);
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
 }

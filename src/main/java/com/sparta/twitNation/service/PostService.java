@@ -13,6 +13,8 @@ import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsReadPageRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsReadRespDto;
 import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
@@ -22,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,7 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
     private final RetweetRepository retweetRepository;
-  
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     // 게시물 생성
@@ -67,11 +68,10 @@ public class PostService {
         return new PostModifyRespDto(post);
     }
 
-    // 특정 유저의 게시물 조회
     @Transactional(readOnly = true)
     public UserPostsRespDto readPostsBy(final Long userId, final int page, final int limit) {
         final User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomApiException("존재하지 않는 유저입니다", HttpStatus.NOT_FOUND.value()));
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND));
         final Page<Post> posts = postRepository.findByUser(user,
                 PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
 
@@ -84,5 +84,20 @@ public class PostService {
                 });
 
         return UserPostsRespDto.from(response);
+    }
+
+    @Transactional(readOnly = true)
+    public PostsReadPageRespDto readPosts(final int page, final int limit) {
+        final Page<Post> posts = postRepository.findAll(PageRequest.of(page, limit));
+
+        final Page<PostsReadRespDto> postsResponse = posts.map(
+                post -> {
+                    final int likeCount = likeRepository.countByPost(post);
+                    final int commentCount = commentRepository.countByPost(post);
+                    final int retweetCount = retweetRepository.countByPost(post);
+                    return PostsReadRespDto.from(post.getUser(), post, likeCount, commentCount, retweetCount);
+                });
+
+        return PostsReadPageRespDto.of(postsResponse);
     }
 }
