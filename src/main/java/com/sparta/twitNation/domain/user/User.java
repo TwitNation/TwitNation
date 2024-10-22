@@ -33,9 +33,11 @@ public class User extends BaseEntity {
     private String password;
 
     @Builder
-    public User(Long id, String email, String password, String nickname) {
+    public User(Long id, String email, String nickname, String bio, String profileImg, String password) {
         this.id = id;
         this.email = email;
+        this.bio = bio;
+        this.profileImg = profileImg;
         this.password = password;
         this.nickname = nickname;
     }
@@ -54,4 +56,5 @@ public class User extends BaseEntity {
         this.password = dto.password();
         this.bio = dto.bio();
     }
+
 }

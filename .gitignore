@@ -36,4 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 
-java/com/sparta/twitNation/config/DevInit.java
+DevInit.java

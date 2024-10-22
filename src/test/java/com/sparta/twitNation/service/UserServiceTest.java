@@ -3,7 +3,6 @@ package com.sparta.twitNation.service;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
-import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,8 +32,7 @@ class UserServiceTest {
         // given
         UserCreateReqDto dto = new UserCreateReqDto("asdf@naver.com", "1234", "Spring", "hello word!", null);
         String password = dto.password();
-        UserCreateReqDto reqDto = dto.passwordEncoded(password);
-        User user = new User(reqDto);
+        User user = new User(dto);
 
         // studding
         when(passwordEncoder.encode(password)).thenReturn("1234");
@@ -48,5 +46,4 @@ class UserServiceTest {
         verify(passwordEncoder, times(1)).encode(any());
         verify(userRepository, times(1)).save(any());
     }
-
 }
