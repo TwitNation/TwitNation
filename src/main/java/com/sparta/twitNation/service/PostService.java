@@ -73,22 +73,15 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
-
+        //작성자 검증
         validatePostOwner(post, userId);
 
         //댓글, 좋아요, 리트윗, 북마크 삭제
-        int deletedCommentCnt = commentRepository.deleteCommentsByPostId(postId);
-        int deletedLikeCnt = likeRepository.deleteLikesByPostId(postId);
-        int deletedRetweetCnt = retweetRepository.deleteRetweetsByPostId(postId);
-        int deletedBookmarkCnt = bookmarkRepository.deleteBookmarksByPostId(postId);
-
-        log.info("게시글 ID {}: 삭제된 댓글 {}, 좋아요 {}, 리트윗 {}, 북마크 {}",
-                postId, deletedCommentCnt, deletedLikeCnt, deletedRetweetCnt, deletedBookmarkCnt);
+        deleteRelatedEntities(postId);
 
         //게시글 삭제
-        postRepository.deleteById(postId);
+        postRepository.delete(post);
         log.info("게시글 ID {} 삭제 완료", postId);
-
         return new PostDeleteRespDto(postId);
     }
 
@@ -96,6 +89,16 @@ public class PostService {
         if (!post.getUser().getId().equals(userId)) {
             throw new CustomApiException(ErrorCode.POST_FORBIDDEN);
         }
+    }
+
+    private void deleteRelatedEntities(Long postId){
+        int deletedCommentCnt = commentRepository.deleteCommentsByPostId(postId);
+        int deletedLikeCnt = likeRepository.deleteLikesByPostId(postId);
+        int deletedRetweetCnt = retweetRepository.deleteRetweetsByPostId(postId);
+        int deletedBookmarkCnt = bookmarkRepository.deleteBookmarksByPostId(postId);
+
+        log.info("게시글 ID {}: 삭제된 댓글 {}, 좋아요 {}, 리트윗 {}, 북마크 {}",
+                postId, deletedCommentCnt, deletedLikeCnt, deletedRetweetCnt, deletedBookmarkCnt);
     }
 
 
