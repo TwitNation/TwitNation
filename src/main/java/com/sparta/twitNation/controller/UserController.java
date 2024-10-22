@@ -2,11 +2,9 @@ package com.sparta.twitNation.controller;
 
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
+import com.sparta.twitNation.dto.user.req.UserDeleteReqDto;
 import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
-import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
-import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
-import com.sparta.twitNation.dto.user.resp.UserInfoRespDto;
-import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
+import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.service.UserService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
@@ -55,6 +53,15 @@ public class UserController {
     @GetMapping("/api/users/profile/{userId}")
     public ResponseEntity<ApiResult<UserInfoRespDto>> myPage(@PathVariable Long userId) {
         UserInfoRespDto respDto = userService.userInfo(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
+    }
+
+    @DeleteMapping("/api/users")
+    public ResponseEntity<ApiResult<UserDeleteRespDto>> resign(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @RequestBody UserDeleteReqDto dto)
+    {
+        UserDeleteRespDto respDto = userService.deleteUser(dto, loginUser);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
 }
