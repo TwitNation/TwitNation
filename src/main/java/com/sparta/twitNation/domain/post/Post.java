@@ -5,6 +5,7 @@ import com.sparta.twitNation.domain.base.BaseEntity;
 import com.sparta.twitNation.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,15 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Post(Long id, String content, User user) {
+        this.id = id;
+        this.content = content;
+        this.user = user;
+    }
+
+    public void modify(String content) {
+        this.content = content;
+    }
 }
