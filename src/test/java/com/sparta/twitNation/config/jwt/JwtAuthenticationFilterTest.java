@@ -41,7 +41,7 @@ class JwtAuthenticationFilterTest {
     @BeforeEach
     public void setUp() throws Exception {
         String password = "password";
-        User user = User.builder().id(1L).email("userA@email.com").password(passwordEncoder.encode(password)).build();
+        User user = User.builder().id(1L).nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
         userRepository.save(user);
     }
 
