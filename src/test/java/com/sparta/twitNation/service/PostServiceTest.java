@@ -223,4 +223,19 @@ class PostServiceTest {
         verify(retweetRepository).deleteRetweetsByPostId(1L);
         verify(bookmarkRepository).deleteBookmarksByPostId(1L);
     }
+
+    @Test
+    void fail_deletePost_forbidden_test() {
+        User anotherUser = User.builder().id(2L).build();
+        LoginUser anotherLoginUser = new LoginUser(anotherUser);
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(anotherUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+
+        CustomApiException exception = assertThrows(CustomApiException.class, () -> {
+            postService.deletePost(1L, anotherLoginUser);
+        });
+
+        assertEquals(ErrorCode.POST_FORBIDDEN, exception.getErrorCode());
+    }
 }
