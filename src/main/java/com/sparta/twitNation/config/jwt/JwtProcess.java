@@ -9,6 +9,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.user.User;
+import com.sparta.twitNation.domain.user.UserRole;
 import com.sparta.twitNation.ex.CustomJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class JwtProcess {
                 .withSubject("twit-nation")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtVo.EXPIRATION_TIME))
                 .withClaim("id", loginUser.getUser().getId()) //추후에 role 관련 정해지면 추가할 것
+                .withClaim("role",loginUser.getUser().getRole().toString())
                 .sign(Algorithm.HMAC512(JwtVo.SECRET));
     }
 
@@ -36,8 +38,11 @@ public class JwtProcess {
 
         try {
             DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(JwtVo.SECRET)).build().verify(token);
+
             Long id = decodedJWT.getClaim("id").asLong();
-            User user = User.builder().id(id).build();
+            String role = decodedJWT.getClaim("role").asString();
+
+            User user = User.builder().id(id).role(UserRole.valueOf(role)).build();
             return new LoginUser(user);
         }catch (TokenExpiredException e){
             log.error("토큰 만료: {}", e.getMessage(), e);
