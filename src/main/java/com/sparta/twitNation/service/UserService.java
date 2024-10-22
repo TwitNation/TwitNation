@@ -5,11 +5,8 @@ import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
 import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
-<<<<<<< HEAD
 import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
 import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
-=======
->>>>>>> 94f025f (#13 refactor(ErrorCode) : username 필드 제거)
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
