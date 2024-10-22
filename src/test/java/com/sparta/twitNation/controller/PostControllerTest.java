@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -55,7 +56,7 @@ class PostControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EntityManager em;
@@ -68,7 +69,7 @@ class PostControllerTest {
     @BeforeEach
     void setUp(){
         String password = "password";
-        User user = User.builder().id(1L).username("userA").nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
+        User user = User.builder().id(1L).nickname("userAAAAAAAA").email("userA@email.com").password(passwordEncoder.encode(password)).build();
         userRepository.save(user);
         em.clear();
 
