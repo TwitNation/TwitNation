@@ -35,6 +35,9 @@ public class User extends BaseEntity {
     public User(Long id, String email, String nickname, String bio, String profileImg, String password) {
         this.id = id;
         this.email = email;
+        this.nickname = nickname;
+        this.bio = bio;
+        this.profileImg = profileImg;
         this.password = password;
     }
 
