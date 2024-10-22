@@ -6,6 +6,7 @@ import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
 import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
+import com.sparta.twitNation.dto.user.resp.UserInfoRespDto;
 import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
@@ -55,5 +56,12 @@ public class UserService {
 
         findUser.changeInfo(reqDto);
         return new UserUpdateRespDto(findUser);
+    }
+
+    public UserInfoRespDto userInfo(Long userId) {
+        User findUser = userRepository.findById(userId).orElseThrow(() ->
+                new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        return new UserInfoRespDto(findUser);
     }
 }
