@@ -93,6 +93,9 @@ public class PostService {
         log.info("게시글 ID {}: 삭제된 북마크 개수 {}", postId, deletedBookmarkCnt);
 
         //게시글 삭제
+        postRepository.deleteById(postId);
+        log.info("게시글 ID {} 삭제 완료", postId);
+
         return new PostDeleteRespDto(postId);
     }
 
