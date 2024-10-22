@@ -23,13 +23,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Long addUser(UserCreateReqDto dto) {
-        String encodedPassword = passwordEncoder.encode(dto.password());
-        UserCreateReqDto reqDto = dto.passwordEncoded(encodedPassword);
-        User user = new User(reqDto);
-        return userRepository.save(user).getId();
-    }
-
     @Transactional
     public UserCreateRespDto register(UserCreateReqDto dto) {
         String encodedPassword = passwordEncoder.encode(dto.password());
@@ -61,6 +54,4 @@ public class UserService {
         findUser.changeInfo(reqDto);
         return new UserUpdateRespDto(findUser);
     }
-
-
 }
