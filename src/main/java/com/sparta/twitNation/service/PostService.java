@@ -6,7 +6,7 @@ import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
-import com.sparta.twitNation.domain.post.dto.PageDetailWithUser;
+import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
@@ -21,11 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -129,9 +126,8 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
-
         //게시글과 작성자 조회
-        PageDetailWithUser postDetailWithUser = postRepository.getPostDetailWithUser(post);
+        PostDetailWithUser postDetailWithUser = postRepository.getPostDetailWithUser(post);
 
         //좋아요, 댓글, 리트윗 개수 조회
         int likeCount = likeRepository.countByPost(post);

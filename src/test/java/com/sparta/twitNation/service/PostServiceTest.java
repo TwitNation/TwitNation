@@ -8,7 +8,8 @@ import com.sparta.twitNation.domain.like.Like;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
-import com.sparta.twitNation.domain.post.dto.PageDetailWithUser;
+import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
+import com.sparta.twitNation.domain.post.dto.PostStatsDto;
 import com.sparta.twitNation.domain.retweet.Retweet;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
@@ -30,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -261,9 +263,38 @@ class PostServiceTest extends DummyObject {
             likeList.add(mockLike(mockPost));
         }
 
-        PageDetailWithUser mockPostDetailWithUser = new PageDetailWithUser(mockPost.getId(), mockUser.getId(),
-                mockUser.getNickname(), mockPost.getContent(), mockPost.getLastModifiedAt(), mockUser.getProfileImg()
-                );
+        PostDetailWithUser mockPostDetailWithUser = new PostDetailWithUser() {
+            @Override
+            public Long getPostId() {
+                return mockPost.getId();
+            }
+
+            @Override
+            public Long getUserId() {
+                return mockUser.getId();
+            }
+
+            @Override
+            public String getNickname() {
+                return mockUser.getNickname();
+            }
+
+            @Override
+            public String getContent() {
+                return mockPost.getContent();
+            }
+
+            @Override
+            public LocalDateTime getModifiedAt() {
+                return mockPost.getLastModifiedAt();
+            }
+
+            @Override
+            public String getProfileImg() {
+                return null;
+            }
+        };
+
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));

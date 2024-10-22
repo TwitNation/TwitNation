@@ -1,6 +1,6 @@
 package com.sparta.twitNation.dto.post.resp;
 
-import com.sparta.twitNation.domain.post.dto.PageDetailWithUser;
+import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
 
 import java.time.LocalDateTime;
 
@@ -15,14 +15,14 @@ public record PostDetailRespDto(
         int commentCount,
         int retweetCount
 ) {
-    public PostDetailRespDto(PageDetailWithUser pageDetailWithUser, int likeCount, int commentCount, int retweetCount) {
+    public PostDetailRespDto(PostDetailWithUser postDetailWithUser, int likeCount, int commentCount, int retweetCount) {
         this(
-                pageDetailWithUser.postId(),
-                pageDetailWithUser.userId(),
-                pageDetailWithUser.nickname(),
-                pageDetailWithUser.content(),
-                pageDetailWithUser.modifiedAt(),
-                pageDetailWithUser.profileImg(),
+                postDetailWithUser.getPostId(),
+                postDetailWithUser.getUserId(),
+                postDetailWithUser.getNickname(),
+                postDetailWithUser.getContent(),
+                postDetailWithUser.getModifiedAt(),
+                postDetailWithUser.getProfileImg(),
                 likeCount,
                 commentCount,
                 retweetCount
