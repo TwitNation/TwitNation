@@ -3,14 +3,10 @@ package com.sparta.twitNation.service;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
-<<<<<<< HEAD
 import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
 import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
-=======
-import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
->>>>>>> dev
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
