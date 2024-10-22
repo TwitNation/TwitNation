@@ -1,17 +1,11 @@
 package com.sparta.twitNation.dto.user.req;
 
-import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
-@Setter
 public record UserCreateReqDto(
         @NotBlank(message = "이메일을 입력헤주세요.")
         @Email(message = "정확한 이메일 형식으로 입력해주세요. ")
