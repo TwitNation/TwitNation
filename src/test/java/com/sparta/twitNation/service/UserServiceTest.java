@@ -3,49 +3,41 @@ package com.sparta.twitNation.service;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
-import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import java.time.LocalDateTime;
 
-@ExtendWith(MockitoExtension.class)
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
 class UserServiceTest {
 
-    @Mock
+    @Autowired
     UserRepository userRepository;
 
-    @Mock
-    PasswordEncoder passwordEncoder;
-
-    @InjectMocks
+    @Autowired
     UserService userService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Test
-    void createSuccessTest() {
+    void creatUserSuccessTest() {
         // given
-        UserCreateReqDto dto = new UserCreateReqDto("asdf@naver.com", "1234", "Spring", "hello word!", null);
+        UserCreateReqDto dto = new UserCreateReqDto("asdf@naver.com", "1234", "Spring", "hello world!", null);
         String password = dto.password();
-        UserCreateReqDto reqDto = dto.passwordEncoded(password);
+        UserCreateReqDto reqDto = dto.passwordEncoded(passwordEncoder.encode(password));
         User user = new User(reqDto);
 
-        // studding
-        when(passwordEncoder.encode(password)).thenReturn("1234");
-        when(userRepository.save(any())).thenReturn(user);
-
         // when
-        UserCreateRespDto respDto = userService.register(dto);
+        User savedUser = userRepository.save(user);
 
-        // then
-        assertThat(respDto).isNotNull();
-        verify(passwordEncoder, times(1)).encode(any());
-        verify(userRepository, times(1)).save(any());
+        //then
+        assertThat(savedUser.getId()).isEqualTo(1L);
+        assertThat(savedUser.getEmail()).isEqualTo("asdf@naver.com");
+        assertThat(savedUser.getCreatedAt()).isBefore(LocalDateTime.now());
     }
-
 }

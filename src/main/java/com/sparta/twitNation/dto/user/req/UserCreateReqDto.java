@@ -10,7 +10,6 @@ public record UserCreateReqDto(
         @Email(message = "정확한 이메일 형식으로 입력해주세요. ")
         String email,
 
-
         @NotBlank
         @Size(min = 8, max = 20, message = "패스워드 글자 수는 60자까지만 입력해주세요.")
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", // test : password1!
