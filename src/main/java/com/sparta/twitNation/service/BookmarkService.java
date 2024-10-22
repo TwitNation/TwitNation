@@ -76,7 +76,7 @@ public class BookmarkService {
 
 
         // 북마크 목록을 조회하고, 관련된 게시글 정보
-        Page<Bookmark> bookmarks = bookmarkRepository.findByUser(loginUser.getUser(), pageRequest);
+        Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(loginUser.getUser().getId(), pageRequest);
 
 
         List<BookmarkPostDto> posts = bookmarks.getContent().stream()

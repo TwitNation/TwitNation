@@ -1,8 +1,11 @@
 package com.sparta.twitNation.domain.user;
 
 import com.sparta.twitNation.domain.base.BaseEntity;
+import com.sparta.twitNation.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,12 +43,12 @@ public class User extends BaseEntity {
     public static User createTestUser() {
         User user = new User();
         user.setId(1L); // 임의의 ID
-        user.setUsername("user1"); // 임의의 사용자 이름
+        user.setNickname("user1"); // 임의의 사용자 이름
         user.setPassword("1");
         user.setUsername("user1");
         user.setProfileImg("기본 이미지");
 
-        // 필요한 다른 필드들도 설정...
         return user;
     }
+
 }

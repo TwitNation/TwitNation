@@ -35,7 +35,6 @@ public class BookmarkController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ){
-
         BookmarkViewRespDto response = bookmarkService.getBookmarks(page, limit);
         return ResponseEntity.ok(response);
 
