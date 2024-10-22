@@ -53,11 +53,4 @@ public class UserController {
         UserUpdateRespDto respDto = userService.updateUser(loginUser.getId(), dto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
-
-
-    public ResponseEntity<ApiResult<Long>> joinUser(@RequestBody @Valid UserCreateReqDto dto) {
-        Long id = userService.addUser(dto);
-        ApiResult<Long> success = ApiResult.success(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(success);
-    }
 }
