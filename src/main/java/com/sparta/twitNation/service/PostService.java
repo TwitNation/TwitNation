@@ -78,7 +78,7 @@ public class PostService {
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
         //작성자 검증
-        post.validatePostOwner(post, userId);
+        post.validatePostOwner(userId);
 
         //댓글, 좋아요, 리트윗, 북마크 삭제
         deleteRelatedEntities(postId);
