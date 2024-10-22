@@ -42,18 +42,18 @@ public class User extends BaseEntity {
         this.nickname = nickname;
     }
 
+    public void changeInfo(UserUpdateReqDto dto) {
+        this.nickname = dto.nickname();
+        this.email = dto.email();
+        this.password = dto.password();
+        this.bio = dto.bio();
+    }
+
     public User(UserCreateReqDto dto) {
         this.email = dto.email();
         this.bio = dto.bio();
         this.profileImg = dto.profileImg();
         this.nickname = dto.nickname();
         this.password = dto.password();
-    }
-
-    public void changeInfo(UserUpdateReqDto dto) {
-        this.nickname = dto.nickname();
-        this.email = dto.email();
-        this.password = dto.password();
-        this.bio = dto.bio();
     }
 }

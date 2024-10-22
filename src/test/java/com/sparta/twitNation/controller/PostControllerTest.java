@@ -61,7 +61,8 @@ class PostControllerTest extends DummyObject {
     private String token;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
+        String password = "password";
         User user = newUser();
         userRepository.save(user);
         postRepository.save(newPost(user));
@@ -71,7 +72,7 @@ class PostControllerTest extends DummyObject {
         token = jwtProcess.create(loginUser);
     }
 
-    @WithUserDetails(value = "userA",setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void success_createPost_test() throws Exception {
 
@@ -90,7 +91,7 @@ class PostControllerTest extends DummyObject {
         System.out.println("responseBody = " + responseBody);
     }
 
-    @WithUserDetails(value = "userA",setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void fail_createPost_invalid_length_test() throws Exception {
 
@@ -110,7 +111,7 @@ class PostControllerTest extends DummyObject {
         System.out.println("responseBody = " + responseBody);
     }
 
-    @WithUserDetails(value = "userA",setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @Test
     void fail_createPost_invalid_notBlank_test() throws Exception {
 
