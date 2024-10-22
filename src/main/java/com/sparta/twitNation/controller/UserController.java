@@ -5,6 +5,7 @@ import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
 import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
+import com.sparta.twitNation.dto.user.resp.UserInfoRespDto;
 import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
 import com.sparta.twitNation.service.UserService;
 import com.sparta.twitNation.util.api.ApiResult;
@@ -45,8 +46,15 @@ public class UserController {
     @PatchMapping("/api/user/profile")
     public ResponseEntity<ApiResult<UserUpdateRespDto>> updateUserInfo(
             @AuthenticationPrincipal LoginUser loginUser,
-            @RequestBody @Valid UserUpdateReqDto dto) {
+            @RequestBody @Valid UserUpdateReqDto dto
+    ) {
         UserUpdateRespDto respDto = userService.updateUser(loginUser.getId(), dto);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
+    }
+
+    @GetMapping("/api/users/profile/{userId}")
+    public ResponseEntity<ApiResult<UserInfoRespDto>> myPage(@PathVariable Long userId) {
+        UserInfoRespDto respDto = userService.userInfo(userId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
 }
