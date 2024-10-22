@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.config.jwt.JwtProcess;
 import com.sparta.twitNation.config.jwt.JwtVo;
+import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.comment.CommentRepository;
+import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
@@ -24,6 +27,9 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -58,6 +64,12 @@ class PostControllerTest extends DummyObject {
     @Autowired
     private JwtProcess jwtProcess;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private BookmarkRepository bookmarkRepository;
+
     private String token;
 
     @BeforeEach
@@ -65,7 +77,10 @@ class PostControllerTest extends DummyObject {
         String password = "password";
         User user = newUser();
         userRepository.save(user);
-        postRepository.save(newPost(user));
+        Post post = newPost(user);
+        postRepository.save(post);
+        commentRepository.save(mockComment(post));
+        bookmarkRepository.save(mockBookmark(post));
         em.clear();
 
         LoginUser loginUser = new LoginUser(user);
@@ -144,6 +159,21 @@ class PostControllerTest extends DummyObject {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content").value("수정 성공"));
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("responseBody = " + responseBody);
+    }
+
+    @WithUserDetails(value = "userA", setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    @Test
+    void success_deletePost_test() throws Exception {
+        //given
+
+        //when then
+        ResultActions resultActions = mvc.perform(delete("/api/posts/{postId}", 1L)
+                        .header(JwtVo.HEADER, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("responseBody = " + responseBody);

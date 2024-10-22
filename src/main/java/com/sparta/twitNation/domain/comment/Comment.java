@@ -32,12 +32,13 @@ public class Comment extends BaseEntity {
     private User user;
 
     @Builder
-    public Comment(String content, User user, Post post, Long id) {
-        this.content = content;
-        this.user = user;
-        this.post = post;
+    public Comment(Long id, String content, Post post, User user) {
         this.id = id;
+        this.content = content;
+        this.post = post;
+        this.user = user;
     }
+
 
     public void modify(String content) {
         if (content != null) {
