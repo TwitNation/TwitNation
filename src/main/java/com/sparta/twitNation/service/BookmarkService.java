@@ -55,21 +55,18 @@ public class BookmarkService {
         Long userId = loginuser.getUser().getId();
 
 
-
-
         Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostIdAndUserId(postId, userId);
-        boolean isBookmarked;
 
         if (existingBookmark.isPresent()) {
             bookmarkRepository.delete(existingBookmark.get());
-            isBookmarked = false;
+            //isBookmarked = false;
         } else {
-            Bookmark bookmark = new Bookmark(post, loginuser.getUser(),true); // 수정된 생성자 사용
+            Bookmark bookmark = new Bookmark(post, loginuser.getUser()); // 수정된 생성자 사용
             bookmarkRepository.save(bookmark);
-            isBookmarked = true;
+            //isBookmarked = true;
         }
 
-        return new BookmarkCreateRespDto(postId, isBookmarked);
+        return new BookmarkCreateRespDto(postId, existingBookmark.isEmpty());
     }
 
 
@@ -95,9 +92,9 @@ public class BookmarkService {
                             post.getUser().getProfileImg(), // 프로필 이미지
                             post.getContent(), // 게시글 내용
                             post.getLastModifiedAt() // 수정일
-//                        like.getLikeCount(), // 좋아요 수
-//                        retweet.getRetweetCount(), // 리트윗 수
-//                        comment.getCommentCount() // 댓글 수
+//                        post.getLikeCount(), // 좋아요 수
+//                        post.getRetweetCount(), // 리트윗 수
+//                        post.getCommentCount() // 댓글 수
                     );
                 })
                 .collect(Collectors.toList());

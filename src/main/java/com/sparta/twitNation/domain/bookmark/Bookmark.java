@@ -17,7 +17,7 @@ import java.util.Optional;
 @Table(name = "bookmarks")
 public class Bookmark extends BaseEntity {
 
-    private boolean isBookmarked;
+    //private boolean isBookmarked;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,18 +32,13 @@ public class Bookmark extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // 명시적인 생성자 추가
-    public Bookmark(Post post,boolean isBookmarked) {
-        this.post = post;
-        this.isBookmarked = isBookmarked;
-    }
+
 
     // User를 포함한 명시적인 생성자 추가
     @Builder
-    public Bookmark(Post post, User user, boolean isBookmarked) {
+    public Bookmark(Post post, User user) {
         this.post = post;
         this.user = user;
-        this.isBookmarked = isBookmarked;
     }
 
 
