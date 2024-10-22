@@ -23,7 +23,7 @@ public class UserController {
     public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
             @RequestPart("user") @Valid UserCreateReqDto dto,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
-            ) {
+    ) {
 
         String profileImgUrl = null;
         // S3 생성 로직 ...
