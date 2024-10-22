@@ -32,14 +32,18 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 60)
     private String password;
 
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
     @Builder
-    public User(Long id, String email, String nickname, String bio, String profileImg, String password) {
+    public User(Long id, String email, String password, String nickname, UserRole role) {
         this.id = id;
         this.email = email;
         this.bio = bio;
         this.profileImg = profileImg;
         this.password = password;
         this.nickname = nickname;
+        this.role = role;
     }
 
     public void changeInfo(UserUpdateReqDto dto) {
@@ -55,5 +59,6 @@ public class User extends BaseEntity {
         this.profileImg = dto.profileImg();
         this.nickname = dto.nickname();
         this.password = dto.password();
+        this.role = UserRole.USER;
     }
 }

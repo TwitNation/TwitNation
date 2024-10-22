@@ -52,8 +52,6 @@ class RetweetServiceTest {
                 email("test@test.com").
                 nickname("test").
                 password("test").
-                bio("test").
-                profileImg("test").
                 build(); // LoginUser 안의 User
         Post post = Post.builder().
                 id(postId).
@@ -84,10 +82,8 @@ class RetweetServiceTest {
                 id(userId).
                 email("test@test.com").
                 nickname("test").
-                password("test").
-                bio("test").
-                profileImg("test").
-                build(); // LoginUser 안의 User
+                password("test")
+                .build();
         Post post = Post.builder().
                 id(postId).
                 content("ddd").

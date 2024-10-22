@@ -4,12 +4,14 @@ import com.sparta.twitNation.config.jwt.JwtAuthenticationFilter;
 import com.sparta.twitNation.config.jwt.JwtAuthorizationFilter;
 import com.sparta.twitNation.config.jwt.JwtExceptionFilter;
 import com.sparta.twitNation.config.jwt.JwtProcess;
+import com.sparta.twitNation.util.CustomResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -57,12 +59,24 @@ public class SecurityConfig {
                 .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .csrf(AbstractHttpConfigurer::disable) //csrf 비활성화
                 .cors(cors -> cors.configurationSource(configurationSource()))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //jwt 사용
                 .formLogin(AbstractHttpConfigurer::disable) //formLogin 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) //브라우저가 팝업창으로 사용자 인증 진행하는 것 비활성화
                 .with(new CustomSecurityFilterManager(), CustomSecurityFilterManager::getClass)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/join").permitAll());
-
+                //인증 실패 Exception 가로채기
+                .exceptionHandling(handler -> handler.authenticationEntryPoint((request, response, e) -> {
+                    log.error("인증 실패: {}", e.getMessage(), e);
+                    CustomResponseUtil.fail(response,"로그인을 진행해 주세요", HttpStatus.UNAUTHORIZED);
+                 }))
+                //권한 실패 Exception 가로채기
+                .exceptionHandling(handler -> handler.accessDeniedHandler((request, response, e) -> {
+                    log.error("권한 실패: {}", e.getMessage(), e);
+                    CustomResponseUtil.fail(response, "권한이 없습니다", HttpStatus.FORBIDDEN);
+                }));
         return http.build();
     }
 
