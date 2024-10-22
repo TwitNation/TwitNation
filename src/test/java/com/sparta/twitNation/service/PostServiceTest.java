@@ -9,7 +9,6 @@ import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
-import com.sparta.twitNation.domain.post.dto.PostStatsDto;
 import com.sparta.twitNation.domain.retweet.Retweet;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
