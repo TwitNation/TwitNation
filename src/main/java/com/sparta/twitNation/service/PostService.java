@@ -6,16 +6,13 @@ import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PageDetailWithUser;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
-import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
-import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
-import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
-import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
-import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
+import com.sparta.twitNation.dto.post.resp.*;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -107,7 +104,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public UserPostsRespDto readPostsBy(final Long userId, final int page, final int limit) {
         final User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND));
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND));
         final Page<Post> posts = postRepository.findByUser(user,
                 PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
 
@@ -125,25 +122,23 @@ public class PostService {
 
     //게시글 단건 조회
     public PostDetailRespDto getPostById(Long postId, LoginUser loginUser){
+        Long userId = loginUser.getUser().getId();
+        userRepository.findById(userId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND)
+        );
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
 
-        //조회
+        //게시글과 작성자 조회
+        PageDetailWithUser postDetailWithUser = postRepository.getPostDetailWithUser(post);
 
+        //좋아요, 댓글, 리트윗 개수 조회
+        int likeCount = likeRepository.countByPost(post);
+        int commentCount = commentRepository.countByPost(post);
+        int retweetCount = retweetRepository.countByPost(post);
 
-
-        return null;
+        return new PostDetailRespDto(postDetailWithUser, likeCount, commentCount, retweetCount);
     }
-    public static class PostDetailRespDto{
-        private Long postId;
-        private Long userId;
-        private String nickname;
-        private String content;
-        private LocalDateTime modifiedAt;
-        private int retweetCount;
-        private int likeCount;
-        private int commentCount;
-        private String profileImg;
-    }
+
 }
