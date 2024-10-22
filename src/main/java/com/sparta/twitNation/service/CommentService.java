@@ -11,6 +11,7 @@ import com.sparta.twitNation.dto.comment.resp.CommentCreateRespDto;
 import com.sparta.twitNation.dto.comment.resp.CommentDeleteRespDto;
 import com.sparta.twitNation.dto.comment.resp.CommentModifyRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
+import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class CommentService {
         Long userId = loginUser.getUser().getId();
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
 
         Comment comment = commentRepository.save(commentReqDto.toEntity(post, loginUser.getUser()));
@@ -45,16 +46,16 @@ public class CommentService {
         Long userId = loginUser.getUser().getId();
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
 
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new CustomApiException("댓글을 찾을 수 없습니다", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException(ErrorCode.COMMENT_NOT_FOUND)
         );
 
         if (!comment.isWrittenBy(userId)) {
-            throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다", HttpStatus.UNAUTHORIZED.value());
+            throw new CustomApiException(ErrorCode.COMMENT_FORBIDEN);
         }
 
         comment.modify(commentModifyReqDto.content());
@@ -69,15 +70,15 @@ public class CommentService {
         Long userId = loginUser.getUser().getId();
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new CustomApiException("존재하지 않는 트윗입니다.", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new CustomApiException("댓글을 찾을 수 없습니다", HttpStatus.NOT_FOUND.value())
+                () -> new CustomApiException(ErrorCode.COMMENT_NOT_FOUND)
         );
 
         if (!comment.isWrittenBy(userId)) {
-            throw new CustomApiException("해당 댓글에 접근할 권한이 없습니다", HttpStatus.UNAUTHORIZED.value());
+            throw new CustomApiException(ErrorCode.COMMENT_FORBIDEN);
         }
 
         commentRepository.deleteById(comment.getId());
