@@ -32,7 +32,9 @@ public class UserService {
             throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
         }
 
-        return new UserCreateRespDto(userRepository.save(user).getId());
+        User savedUser = userRepository.save(user);
+
+        return new UserCreateRespDto(savedUser.getId(), savedUser.getEmail());
     }
 
     public UserEditPageRespDto editList(Long userId) {
