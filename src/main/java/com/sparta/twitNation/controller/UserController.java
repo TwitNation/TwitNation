@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping("/auth/join")
     public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
-            @RequestPart @Valid UserCreateReqDto dto,
+            @RequestPart("user") @Valid UserCreateReqDto dto,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
             ) {
 
