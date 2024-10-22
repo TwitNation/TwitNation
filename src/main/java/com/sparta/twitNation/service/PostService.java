@@ -62,7 +62,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
-        validatePostOwner(post, userId);
+        post.validatePostOwner(userId);
         post.modify(postModifyReqDto.content());
         log.info("유저 ID {}: 게시글 ID {} 수정 완료", userId, postId);
         return new PostModifyRespDto(post);
@@ -78,7 +78,7 @@ public class PostService {
                 () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
         );
         //작성자 검증
-        validatePostOwner(post, userId);
+        post.validatePostOwner(post, userId);
 
         //댓글, 좋아요, 리트윗, 북마크 삭제
         deleteRelatedEntities(postId);
@@ -89,11 +89,6 @@ public class PostService {
         return new PostDeleteRespDto(postId);
     }
 
-    private void validatePostOwner(Post post, Long userId){
-        if (!post.getUser().getId().equals(userId)) {
-            throw new CustomApiException(ErrorCode.POST_FORBIDDEN);
-        }
-    }
 
     private void deleteRelatedEntities(Long postId){
         int deletedCommentCnt = commentRepository.deleteCommentsByPostId(postId);
