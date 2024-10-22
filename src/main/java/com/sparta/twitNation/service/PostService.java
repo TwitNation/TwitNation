@@ -28,6 +28,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -119,5 +121,29 @@ public class PostService {
                 });
 
         return UserPostsRespDto.from(response);
+    }
+
+    //게시글 단건 조회
+    public PostDetailRespDto getPostById(Long postId, LoginUser loginUser){
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
+        );
+
+        //조회
+
+
+
+        return null;
+    }
+    public static class PostDetailRespDto{
+        private Long postId;
+        private Long userId;
+        private String nickname;
+        private String content;
+        private LocalDateTime modifiedAt;
+        private int retweetCount;
+        private int likeCount;
+        private int commentCount;
+        private String profileImg;
     }
 }
