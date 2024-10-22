@@ -22,11 +22,9 @@ public class BookmarkController {
     @PostMapping("/bookmarks/{postId}")
     public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId) {
 
-        User user = User.createTestUser();
-        LoginUser loginUser = new LoginUser(user);
 
         // Bookmark 생성
-        BookmarkCreateRespDto response = bookmarkService.createBookmark(postId, loginUser);
+        BookmarkCreateRespDto response = bookmarkService.createBookmark(postId);
 
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.CREATED);
         //return new ResponseEntity<>(ApiResult.success(bookmarkService.createBookmark(postId, userId)), HttpStatus.CREATED);
@@ -37,9 +35,8 @@ public class BookmarkController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit
     ){
-        User user = User.createTestUser();
-        LoginUser loginUser = new LoginUser(user);
-        BookmarkViewRespDto response = bookmarkService.getBookmarks(page, limit, loginUser);
+
+        BookmarkViewRespDto response = bookmarkService.getBookmarks(page, limit);
         return ResponseEntity.ok(response);
 
     }

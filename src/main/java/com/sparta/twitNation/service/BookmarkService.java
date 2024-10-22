@@ -40,30 +40,26 @@ public class BookmarkService {
 
 
     @Transactional
-    public BookmarkCreateRespDto createBookmark(Long postId, LoginUser loginuser) {
+    public BookmarkCreateRespDto createBookmark(Long postId) {
+
+        User user = User.createTestUser();
+        LoginUser loginUser = new LoginUser(user);
 
         //게시글 존재 여부
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomApiException("존재하지 않는 게시글입니다.", 404));
 
-        //사용자 존재 여부
-        User user = loginuser.getUser();
-        if(user == null){
-            throw new CustomApiException("존재하지 않는 사용자입니다.", 401);
-        }
-
-        Long userId = loginuser.getUser().getId();
 
 
-        Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostIdAndUserId(postId, userId);
+        Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostIdAndUserId(postId, loginUser.getUser().getId());
 
         if (existingBookmark.isPresent()) {
             bookmarkRepository.delete(existingBookmark.get());
-            //isBookmarked = false;
+
         } else {
-            Bookmark bookmark = new Bookmark(post, loginuser.getUser()); // 수정된 생성자 사용
+            Bookmark bookmark = new Bookmark(post, loginUser.getUser()); // 수정된 생성자 사용
             bookmarkRepository.save(bookmark);
-            //isBookmarked = true;
+
         }
 
         return new BookmarkCreateRespDto(postId, existingBookmark.isEmpty());
@@ -71,15 +67,16 @@ public class BookmarkService {
 
 
 
-    public BookmarkViewRespDto getBookmarks(int page, int limit, LoginUser loginUser) {
+    public BookmarkViewRespDto getBookmarks(int page, int limit) {
+
+        User user = User.createTestUser();
+        LoginUser loginUser = new LoginUser(user);
+
         PageRequest pageRequest = PageRequest.of(page, limit);
 
-        // 로그인한 사용자의 ID를 가져옴
-        Long userId = loginUser.getUser().getId();
 
-        // 북마크 목록을 조회하고, 관련된 게시글 정보를 가져옵니다.
-       // Page<Bookmark> bookmarks = bookmarkRepository.findAll(pageRequest);
-        Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(userId, pageRequest);
+        // 북마크 목록을 조회하고, 관련된 게시글 정보
+        Page<Bookmark> bookmarks = bookmarkRepository.findByUser(loginUser.getUser(), pageRequest);
 
 
         List<BookmarkPostDto> posts = bookmarks.getContent().stream()
