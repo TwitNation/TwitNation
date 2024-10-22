@@ -9,7 +9,6 @@ import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
-import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.dummy.DummyObject;
 import jakarta.persistence.EntityManager;
@@ -17,26 +16,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.awaitility.Awaitility.given;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -90,9 +81,9 @@ class PostControllerTest extends DummyObject {
 
         //when
         ResultActions resultActions = mvc.perform(post("/api/posts")
-                .header(JwtVo.HEADER, token)
-                .content(requestBody)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header(JwtVo.HEADER, token)
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();

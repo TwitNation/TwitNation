@@ -1,8 +1,12 @@
 package com.sparta.twitNation.domain.user;
 
 import com.sparta.twitNation.domain.base.BaseEntity;
+import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -12,8 +16,6 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String username; //추후에 삭제해주세요!!
 
     @Column(unique = true, nullable = false, length = 255)
     private String email;
@@ -30,13 +32,17 @@ public class User extends BaseEntity {
     private String password;
 
     @Builder
-    public User(Long id, String username, String email, String nickname, String bio, String profileImg, String password) {
+    public User(Long id, String email, String password) {
         this.id = id;
-        this.username = username;
         this.email = email;
-        this.nickname = nickname;
-        this.bio = bio;
-        this.profileImg = profileImg;
         this.password = password;
+    }
+
+    public User(UserCreateReqDto dto) {
+        this.email = dto.email();
+        this.bio = dto.bio();
+        this.profileImg = dto.profileImg();
+        this.nickname = dto.nickname();
+        this.password = dto.password();
     }
 }

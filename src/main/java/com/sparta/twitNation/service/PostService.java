@@ -35,7 +35,7 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
     private final RetweetRepository retweetRepository;
-  
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     // 게시물 생성
