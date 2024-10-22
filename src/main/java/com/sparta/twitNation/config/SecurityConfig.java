@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -48,6 +49,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(0)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         log.debug("디버그: filterChain 등록");
         http
@@ -59,6 +61,20 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable) //브라우저가 팝업창으로 사용자 인증 진행하는 것 비활성화
                 .with(new CustomSecurityFilterManager(), CustomSecurityFilterManager::getClass);
 
+        return http.build();
+    }
+
+    /**
+     * 마지막에 추가
+     */
+    @Bean
+    @Order(1)
+    public SecurityFilterChain HttpRequestFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/auth/**").permitAll()
+                                .anyRequest().authenticated()
+                );
         return http.build();
     }
 

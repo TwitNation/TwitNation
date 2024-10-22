@@ -13,8 +13,6 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username; //추후에 삭제해주세요!!
-
     @Column(unique = true, nullable = false, length = 255)
     private String email;
 
@@ -30,9 +28,8 @@ public class User extends BaseEntity {
     private String password;
 
     @Builder
-    public User(Long id, String username, String email, String nickname, String bio, String profileImg, String password) {
+    public User(Long id, String email, String nickname, String bio, String profileImg, String password) {
         this.id = id;
-        this.username = username;
         this.email = email;
         this.nickname = nickname;
         this.bio = bio;

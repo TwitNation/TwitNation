@@ -1,5 +1,6 @@
 package com.sparta.twitNation.config.auth.dto;
 
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginReqDto {
 
-    private String username;
+    @Email
+    private String email;
     private String password;
 }
