@@ -32,7 +32,7 @@ class UserServiceTest {
         // given
         UserCreateReqDto dto = new UserCreateReqDto("asdf@naver.com", "1234", "Spring", "hello word!", null);
         String password = dto.password();
-        User user = new User(dto, password);
+        User user = new User(dto);
 
         // studding
         when(passwordEncoder.encode(password)).thenReturn("1234");
