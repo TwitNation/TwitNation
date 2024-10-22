@@ -2,6 +2,7 @@ package com.sparta.twitNation.domain.user;
 
 import com.sparta.twitNation.domain.base.BaseEntity;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
+import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -47,5 +48,12 @@ public class User extends BaseEntity {
         this.profileImg = dto.profileImg();
         this.nickname = dto.nickname();
         this.password = dto.password();
+    }
+
+    public void changeInfo(UserUpdateReqDto dto) {
+        this.nickname = dto.nickname();
+        this.email = dto.email();
+        this.password = dto.password();
+        this.bio = dto.bio();
     }
 }

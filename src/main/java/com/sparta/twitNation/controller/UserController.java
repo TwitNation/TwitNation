@@ -2,8 +2,10 @@ package com.sparta.twitNation.controller;
 
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
+import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.UserCreateRespDto;
 import com.sparta.twitNation.dto.user.resp.UserEditPageRespDto;
+import com.sparta.twitNation.dto.user.resp.UserUpdateRespDto;
 import com.sparta.twitNation.service.UserService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
@@ -39,5 +41,14 @@ public class UserController {
         UserEditPageRespDto dto = userService.editList(loginUser.getUser().getId());
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(dto));
     }
+
+    @PatchMapping("/api/user/profile")
+    public ResponseEntity<ApiResult<UserUpdateRespDto>> updateUserInfo(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @RequestBody UserUpdateReqDto dto) {
+        UserUpdateRespDto respDto = userService.updateUser(loginUser.getId(), dto);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
+    }
+
 
 }
