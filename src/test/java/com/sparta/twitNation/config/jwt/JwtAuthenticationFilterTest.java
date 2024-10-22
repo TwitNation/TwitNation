@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twitNation.config.auth.dto.LoginReqDto;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
+import com.sparta.twitNation.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void success_authentication_test() throws Exception {
         //given
-        LoginReqDto loginReqDto = LoginReqDto.builder().username("userA").password("password").build();
+        LoginReqDto loginReqDto = LoginReqDto.builder().email("asdf@naver.com").password("password").build();
         String requestBody = om.writeValueAsString(loginReqDto);
         System.out.println("requestBody = " + requestBody);
 
@@ -75,7 +76,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void fail_authentication_test() throws Exception {
         //given
-        LoginReqDto loginReqDto = LoginReqDto.builder().username("username").password("password1234").build();
+        LoginReqDto loginReqDto = LoginReqDto.builder().email("asdf@naver.com").password("password1234").build();
         String requestBody = om.writeValueAsString(loginReqDto);
 
         //when
