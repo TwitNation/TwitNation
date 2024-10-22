@@ -54,6 +54,6 @@ public class User extends BaseEntity {
         this.bio = dto.bio();
         this.profileImg = dto.profileImg();
         this.nickname = dto.nickname();
-        this.password = password;
+        this.password = dto.password();
     }
 }
