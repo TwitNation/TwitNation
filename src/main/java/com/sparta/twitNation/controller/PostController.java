@@ -5,6 +5,7 @@ import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -35,4 +37,9 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{postId")
+    public ResponseEntity<ApiResult<PostDeleteRespDto>> deletePost(@PathVariable(value = "postId")Long postId,
+                                                                   @AuthenticationPrincipal LoginUser loginUser){
+        return new ResponseEntity<>(ApiResult.success(postService.deletePost(postId, loginUser)), HttpStatus.OK);
+    }
 }
