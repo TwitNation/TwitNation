@@ -24,7 +24,6 @@ class UserServiceTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Test
     void creatUserSuccessTest() {
         // given
