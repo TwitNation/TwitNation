@@ -3,6 +3,7 @@ package com.sparta.twitNation.service;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.user.req.UserCreateReqDto;
+import com.sparta.twitNation.dto.user.resp.UserInfoRespDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,5 +40,24 @@ class UserServiceTest {
         assertThat(savedUser.getId()).isEqualTo(1L);
         assertThat(savedUser.getEmail()).isEqualTo("asdf@naver.com");
         assertThat(savedUser.getCreatedAt()).isBefore(LocalDateTime.now());
+    }
+
+    @Test
+    void getUserSuccessTest(){
+        // given
+        UserCreateReqDto dto = new UserCreateReqDto("asdf@naver.com", "1234", "Spring", "hello world!", null);
+        String password = dto.password();
+        UserCreateReqDto reqDto = dto.passwordEncoded(passwordEncoder.encode(password));
+        User user = new User(reqDto);
+        User savedUser = userRepository.save(user);
+
+        // when
+
+        UserInfoRespDto respDto = userService.userInfo(savedUser.getId());
+
+        //then
+        assertThat(respDto.bio()).isEqualTo(user.getBio());
+        assertThat(respDto.nickname()).isEqualTo(user.getNickname());
+        assertThat(respDto.createAt()).isBefore(LocalDateTime.now());
     }
 }
