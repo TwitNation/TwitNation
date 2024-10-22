@@ -37,7 +37,7 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{postId")
+    @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResult<PostDeleteRespDto>> deletePost(@PathVariable(value = "postId")Long postId,
                                                                    @AuthenticationPrincipal LoginUser loginUser){
         return new ResponseEntity<>(ApiResult.success(postService.deletePost(postId, loginUser)), HttpStatus.OK);
