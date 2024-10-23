@@ -22,4 +22,6 @@ public interface RetweetRepository extends JpaRepository<Retweet, Long> {
 
     Optional<Retweet> findByPostAndUser(Post post, User user);
 
+    void deleteByUserId(Long userId);
+
 }

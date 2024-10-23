@@ -38,4 +38,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
             "left join User u on u = p.user " +
             "where p = :post")
     PostDetailWithUser getPostDetailWithUser(@Param("post") Post post);
+
+    void deleteByUserId(Long userId);
+
 }
