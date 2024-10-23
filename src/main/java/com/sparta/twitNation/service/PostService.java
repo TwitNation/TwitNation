@@ -9,6 +9,7 @@ import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
 import com.sparta.twitNation.domain.post.dto.PostWithDetails;
+import com.sparta.twitNation.domain.post.dto.PostWithUser;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
@@ -19,7 +20,6 @@ import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
 import com.sparta.twitNation.dto.post.resp.PostDetailRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
-import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
 import com.sparta.twitNation.dto.post.resp.PostsReadPageRespDto;
 import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
 import com.sparta.twitNation.dto.post.resp.PostsSearchRespDto;
@@ -108,24 +108,15 @@ public class PostService {
                 postId, deletedCommentCnt, deletedLikeCnt, deletedRetweetCnt, deletedBookmarkCnt);
     }
 
-
     // 특정 유저의 게시물 조회
     @Transactional(readOnly = true)
     public UserPostsRespDto readPostsBy(final Long userId, final int page, final int limit) {
         final User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomApiException(ErrorCode.USER_NOT_FOUND));
-        final Page<Post> posts = postRepository.findByUser(user,
-                PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
 
-        final Page<PostReadPageRespDto> response = posts.map(
-                post -> {
-                    final int likeCount = likeRepository.countByPost(post);
-                    final int commentCount = commentRepository.countByPost(post);
-                    final int retweetCount = retweetRepository.countByPost(post);
-                    return PostReadPageRespDto.from(user, post, likeCount, commentCount, retweetCount);
-                });
+        final Page<PostWithUser> posts = postRepository.findAllByUser(user, PageRequest.of(page, limit));
 
-        return UserPostsRespDto.from(response);
+        return UserPostsRespDto.from(posts);
     }
 
     @Transactional(readOnly = true)
