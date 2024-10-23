@@ -168,19 +168,15 @@ public class PostService {
             final LocalDateTime startModifiedAt,
             final LocalDateTime endModifiedAt
     ) {
-        final Page<Post> posts = postRepository.searchByNicknameAndKeyword(sort, keyword, startModifiedAt,
+        final Page<PostsSearchRespDto> posts = postRepository.searchByNicknameAndKeyword(
+                sort,
+                keyword,
+                startModifiedAt,
                 endModifiedAt,
-                PageRequest.of(page, limit));
+                PageRequest.of(page, limit)
+        );
 
-        final Page<PostsSearchRespDto> response = posts.map(
-                post -> {
-                    final int likeCount = likeRepository.countByPost(post);
-                    final int commentCount = commentRepository.countByPost(post);
-                    final int retweetCount = retweetRepository.countByPost(post);
-                    return PostsSearchRespDto.from(post.getUser(), post, likeCount, commentCount, retweetCount);
-                });
-
-        return PostsSearchPageRespDto.from(response);
+        return PostsSearchPageRespDto.from(posts);
     }
 }
 
