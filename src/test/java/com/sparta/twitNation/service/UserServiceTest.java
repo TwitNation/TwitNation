@@ -39,7 +39,7 @@ class UserServiceTest {
         when(userRepository.save(any())).thenReturn(user);
 
         // when
-        UserCreateRespDto respDto = userService.register(dto);
+        UserCreateRespDto respDto = userService.register(dto, null);
 
         // then
         assertThat(respDto).isNotNull();

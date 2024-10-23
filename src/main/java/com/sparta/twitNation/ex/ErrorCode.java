@@ -2,6 +2,7 @@ package com.sparta.twitNation.ex;
 
 import com.sparta.twitNation.service.UserService;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
@@ -15,8 +16,12 @@ public enum ErrorCode {
     ALREADY_USER_EXIST(400, "존재하는 사용자입니다."),
     TOKEN_MISSING(401, "Authorization 헤더가 누락되었습니다"),
     MISS_MATCHER_PASSWORD(401, "비밀번호가 일치하지 않습니다."),
+    FILE_UPLOAD_ERROR(500, "파일 업로드 중 오류가 발생했습니다"),
+    FILE_NOT_FOUND(400,"파일이 없습니다"),
+    FILE_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE.value(), "파일 크기가 허용된 최대 크기를 초과했습니다."),
     SAME_PASSWORD_MATCHER(400, "동일한 비밀번호로는 변경할 수 없습니다."),
     FOLLOW_FORBIDDEN(403, "자기 자신을 팔로우할 수 없습니다");
+
 
 
     private final int status;
