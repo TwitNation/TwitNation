@@ -55,15 +55,6 @@ public class User extends BaseEntity {
         this.role = UserRole.USER;
     }
 
-//    public static User createTestUser() {
-//        User user = new User();
-//        user.setId(1L); // 임의의 ID
-////        user.setNickname("user1"); // 임의의 사용자 이름
-////        user.setPassword("1");
-////        user.setUsername("user1");
-//        user.setProfileImg("기본 이미지");
-//
-//        return user;
-//    }
+
 
 }

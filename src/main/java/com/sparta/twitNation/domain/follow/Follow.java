@@ -5,6 +5,7 @@ import com.sparta.twitNation.domain.base.BaseEntity;
 import com.sparta.twitNation.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,17 @@ public class Follow extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_id")
     private User following;
+
+    @Builder
+    public Follow(Long id, User follower, User following) {
+        this.id = id;
+        this.follower = follower;
+        this.following = following;
+    }
+
+    @Builder
+    public Follow(Long id, User user) {
+        this.id = id;
+        this.follower = user;
+    }
 }
