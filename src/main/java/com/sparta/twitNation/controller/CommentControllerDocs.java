@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public interface CommentControllerDocs {
-    @Operation(summary = "댓글 생성", description = "게시글 한 건에 대한 댓글을 작성한다.")
+    @Operation(summary = "댓글 생성", description = "게시글 한 건에 대한 댓글을 작성합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다")
@@ -28,7 +28,7 @@ public interface CommentControllerDocs {
                                                                          @RequestBody @Valid CommentCreateReqDto commentCreateReqDto,
                                                                          @AuthenticationPrincipal LoginUser loginUser);
 
-    @Operation(summary = "댓글 수정", description = "한 건의 대한 댓글을 수정한다.")
+    @Operation(summary = "댓글 수정", description = "한 건의 대한 댓글을 수정합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "403", description = "해당 댓글을 수정할 권한이 없습니다."),
@@ -40,7 +40,7 @@ public interface CommentControllerDocs {
                                                                          @RequestBody @Valid CommentModifyReqDto commentModifyReqDto,
                                                                          @AuthenticationPrincipal LoginUser loginUser);
 
-    @Operation(summary = "댓글 삭제", description = "한 건의 대한 댓글을 삭제한다.")
+    @Operation(summary = "댓글 삭제", description = "한 건의 대한 댓글을 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "403", description = "해당 댓글을 수정할 권한이 없습니다."),

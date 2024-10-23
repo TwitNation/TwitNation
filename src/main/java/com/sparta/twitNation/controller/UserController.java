@@ -7,6 +7,7 @@ import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.service.UserService;
 import com.sparta.twitNation.util.api.ApiResult;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,11 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserControllerDocs{
 
     private final UserService userService;
 
-    @PostMapping("/auth/join")
+    @RequestMapping(method = RequestMethod.POST, value = "/auth/join",
+        consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
             @RequestPart("user") @Valid UserCreateReqDto dto,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
