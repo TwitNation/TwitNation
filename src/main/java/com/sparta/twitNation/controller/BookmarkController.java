@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-public class BookmarkController {
+public class BookmarkController implements BookmarkControllerDocs{
     private final BookmarkService bookmarkService;
 
     public BookmarkController(BookmarkService bookmarkService) {
