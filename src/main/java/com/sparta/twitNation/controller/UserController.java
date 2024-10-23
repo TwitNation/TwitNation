@@ -35,13 +35,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }
 
-    @GetMapping("/api/user/profile")
+    @GetMapping("/api/users/profile")
     public ResponseEntity<ApiResult<UserEditPageRespDto>> editPage(@AuthenticationPrincipal LoginUser loginUser) {
         UserEditPageRespDto dto = userService.editList(loginUser.getUser().getId());
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(dto));
     }
 
-    @PatchMapping("/api/user/profile")
+    @PatchMapping("/api/users/profile")
     public ResponseEntity<ApiResult<UserUpdateRespDto>> updateUserInfo(
             @AuthenticationPrincipal LoginUser loginUser,
             @RequestBody @Valid UserUpdateReqDto dto
