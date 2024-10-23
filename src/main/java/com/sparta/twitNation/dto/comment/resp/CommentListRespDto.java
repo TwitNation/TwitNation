@@ -9,7 +9,7 @@ import java.util.List;
 public record CommentListRespDto(
         long elementsCount,
         long currentPage,
-        long nextPage,
+        Long nextPage,
         boolean hasNextPage,
         long pageSize,
         List<CommentRespDto> commentList
@@ -18,7 +18,7 @@ public record CommentListRespDto(
         this(
                 commentPage.getTotalElements(),
                 commentPage.getNumber(),
-                commentPage.hasNext() ? commentPage.getNumber() + 1 : null,
+                commentPage.hasNext() ? (long) commentPage.getNumber() + 1 : null,
                 commentPage.hasNext(),
                 commentPage.getSize(),
                 commentPage.stream()
