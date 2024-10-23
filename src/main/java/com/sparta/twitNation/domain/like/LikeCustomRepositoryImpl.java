@@ -24,7 +24,6 @@ public class LikeCustomRepositoryImpl implements LikeCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-
     @Override
     public Page<LikeReadPageRespDto> searchLikes(Long userId, Pageable pageable) {
         List<Like> likeList = jpaQueryFactory
