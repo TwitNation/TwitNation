@@ -29,16 +29,4 @@ public class FollowController {
 
     }
 
-//    @GetMapping("/follow/{userId}")
-//    public ResponseEntity<ApiResult<FollowerViewRespDto>> getFollowers(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int limit,
-//            @AuthenticationPrincipal LoginUser loginUser
-//    ){
-//        FollowerViewRespDto response = followService.getFollwers(page, limit, loginUser);
-//        return ResponseEntity.ok(ApiResult.success(response));
-//
-//    }
-
-
 }

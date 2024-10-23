@@ -16,7 +16,4 @@ public class FollowCreateRespDto {
     }
 
 
-    public FollowCreateRespDto(boolean isFollowed) {
-        this.isFollowed = isFollowed;
-    }
 }
