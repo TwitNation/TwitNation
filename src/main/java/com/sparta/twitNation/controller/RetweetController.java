@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/posts")
-public class RetweetController {
+public class RetweetController implements RetweetControllerDocs{
 
     private final RetweetService retweetService;
 
