@@ -10,6 +10,8 @@ import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Transactional
     public UserCreateRespDto register(UserCreateReqDto dto, MultipartFile file) {
@@ -73,10 +76,44 @@ public class UserService {
         if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             throw new CustomApiException(ErrorCode.MISS_MATCHER_PASSWORD);
         }
-        s3Service.deleteImage(user.getProfileImg());
+        if(user.getProfileImg() != null) {
+            s3Service.deleteImage(user.getProfileImg());
+        }
         userRepository.deleteById(user.getId());
         SecurityContextHolder.clearContext();
 
         return new UserDeleteRespDto(user.getId());
     }
+
+    @Transactional
+    public UserProfileImgUpdateRespDto updateProfileImg(MultipartFile file, LoginUser loginUser){
+        User user = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
+                new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        String oldImgUrl = user.getProfileImg();
+        String newImgUrl = null;
+        try {
+
+            newImgUrl = s3Service.uploadImage(file);
+            user.updateProfileImg(newImgUrl);
+
+            if (oldImgUrl != null) {
+                s3Service.deleteImage(oldImgUrl);
+            }
+            return new UserProfileImgUpdateRespDto(newImgUrl);
+        } catch (Exception e) {
+            if (newImgUrl != null) {
+                try {
+                    s3Service.deleteImage(newImgUrl);
+                } catch (Exception ex) {
+                    log.error("변경 요청한 유저 프로필 사진 S3 삭제 실패: {}", ex.getMessage(), ex);
+                }
+            }
+            throw new CustomApiException(ErrorCode.FILE_UPLOAD_ERROR);
+        }
+    }
+
+
+
+    public record UserProfileImgUpdateRespDto(String profileImg){}
 }

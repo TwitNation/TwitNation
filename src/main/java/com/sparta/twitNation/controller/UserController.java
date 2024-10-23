@@ -60,4 +60,6 @@ public class UserController {
         UserDeleteRespDto respDto = userService.deleteUser(dto, loginUser);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
+
+    //@PutMapping("/api/users/profile/image")
 }

@@ -61,4 +61,8 @@ public class User extends BaseEntity {
         this.nickname = dto.nickname();
         this.bio = dto.bio();
     }
+
+    public void updateProfileImg(String profileImg){
+        this.profileImg = profileImg;
+    }
 }

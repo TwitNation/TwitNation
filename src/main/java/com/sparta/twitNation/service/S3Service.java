@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +33,26 @@ public class S3Service {
     @Value("${cloud.aws.region.static}")
     private String region;
 
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String MAX_FILE_SIZE;
+
+    private long maxFileSize;
+
+    @PostConstruct
+    public void init() {
+        MAX_FILE_SIZE = parseMaxFileSize(maxFileSizeValue);
+    }
+
+
     public String uploadImage(MultipartFile file){
+
+        validateFile(file);
+
         String keyName = "uploads/"+file.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
+
         try{
             S3Client.putObject(bucket, keyName, file.getInputStream(), metadata);
         }catch(IOException | AmazonS3Exception e){
@@ -67,7 +83,28 @@ public class S3Service {
     private void deleteObjectFromS3(String bucket, String objectKey) {
         S3Client.deleteObject(bucket, objectKey);
     }
+    private void validateFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            log.debug("S3 파일 업로드 실패: 파일이 없음");
+            throw new CustomApiException(ErrorCode.FILE_NOT_FOUND);
+        }
+        if (file.getSize() > maxFileSize) {
+            log.debug("S3 파일 업로드 실패: 파일 크기 초과");
+            throw new CustomApiException(ErrorCode.FILE_TOO_LARGE);
+        }
+    }
 
+    private long parseMaxFileSize(String size) {
+        if (size.toLowerCase().endsWith("mb")) {
+            return Long.parseLong(size.replaceAll("[^0-9]", "")) * 1024 * 1024;
+        } else if (size.toLowerCase().endsWith("kb")) {
+            return Long.parseLong(size.replaceAll("[^0-9]", "")) * 1024;
+        } else if (size.toLowerCase().endsWith("gb")) {
+            return Long.parseLong(size.replaceAll("[^0-9]", "")) * 1024 * 1024 * 1024;
+        } else {
+            return Long.parseLong(size);
+        }
+    }
 
 
 }
