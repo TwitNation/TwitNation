@@ -81,7 +81,8 @@ public class PostController {
             @RequestParam(defaultValue = "10", value = "limit") int limit
     ) {
         final PostsReadPageRespDto response = postService.readPosts(page, limit);
-
+        return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
+    }
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResult<PostDetailRespDto>> getPostById(@PathVariable(value = "postId")Long postId, @AuthenticationPrincipal LoginUser loginUser){
         return new ResponseEntity<>(ApiResult.success(postService.getPostById(postId, loginUser)),HttpStatus.OK);
@@ -94,7 +95,7 @@ public class PostController {
                                                                              @AuthenticationPrincipal LoginUser loginUser) {
         return new ResponseEntity<>(ApiResult.success(postService.getCommentsByPostId(postId, loginUser.getUser(), page, limit)), HttpStatus.OK);
     }
-  
+
     @GetMapping("/search")
     public ResponseEntity<ApiResult<PostsSearchPageRespDto>> searchPosts(
             @RequestParam(defaultValue = "0") final int page,
@@ -108,5 +109,7 @@ public class PostController {
                 endModifiedAt);
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
+
+
 }
 
