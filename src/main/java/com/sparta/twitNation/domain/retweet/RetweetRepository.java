@@ -18,9 +18,7 @@ public interface RetweetRepository extends JpaRepository<Retweet, Long> {
     @Query("delete from Retweet r where r.post.id = :postId")
     int deleteRetweetsByPostId(@Param(value = "postId") Long postId);
 
-    @Query("SELECT COUNT(l) FROM Like l WHERE l.post = :post")
     int countByPost(@Param("post") final Post post);
-
 
     Optional<Retweet> findByPostAndUser(Post post, User user);
 
