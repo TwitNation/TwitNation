@@ -37,7 +37,7 @@ public class FollowService {
                 .orElseThrow(() -> new CustomApiException(ErrorCode.USER_NOT_FOUND));
 
         if (currentUser.getId().equals(targetUserId)) {
-            throw new IllegalArgumentException("자신을 팔로우할 수 없습니다.");
+            throw new CustomApiException(ErrorCode.FOLLOW_FORBIDDEN);
         }
 
 
