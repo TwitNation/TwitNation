@@ -1,5 +1,6 @@
 package com.sparta.twitNation.dto.post.resp;
 
+import com.sparta.twitNation.domain.post.dto.PostWithDetails;
 import java.util.List;
 import org.springframework.data.domain.Page;
 
@@ -10,9 +11,9 @@ public record PostsReadPageRespDto(
         int pageCount,
         boolean nextPageBool,
         int pageSize,
-        List<PostsReadRespDto> posts
+        List<PostWithDetails> posts
 ) {
-    public static PostsReadPageRespDto of(final Page<PostsReadRespDto> posts) {
+    public static PostsReadPageRespDto from(final Page<PostWithDetails> posts) {
         return new PostsReadPageRespDto(
                 (int) posts.getTotalElements(),
                 posts.getNumber(),
