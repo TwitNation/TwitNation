@@ -13,7 +13,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByUser(final User user, final Pageable pageable);
 
-    @Query("select p.id as postId, u.nickname as userNickname, u.profileImg as userProfileImg, " +
+    @Query("select u.id as userId, p.id as postId, u.nickname as userNickname, u.profileImg as userProfileImg, " +
             "p.content as content, p.lastModifiedAt as modifiedAt, " +
             "count(distinct l.id) as likeCount, count(distinct c.id) as commentCount, count(distinct r.id) as retweetCount " +
             "from Post p " +
