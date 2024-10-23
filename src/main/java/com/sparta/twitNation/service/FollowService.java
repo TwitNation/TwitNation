@@ -13,6 +13,7 @@ import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,10 +61,12 @@ public class FollowService {
 
     }
 
-        public FollowerViewRespDto getFollwers(int page, int limit, LoginUser loginUser) {
+    public FollowerViewRespDto getFollwers(int page, int limit, LoginUser loginUser) {
 
         Long userId = loginUser.getUser().getId();
-        PageRequest pageRequest = PageRequest.of(page, limit);
+        //PageRequest pageRequest = PageRequest.of(page, limit);
+        // 정렬 조건 추가 (아이디 기준으로 오름차순 정렬)
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "id"));
 
 
         Page<User> followers = followRepository.findFollowersByUserId(userId, pageRequest);
