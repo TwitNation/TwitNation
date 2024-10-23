@@ -4,14 +4,19 @@ import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.*;
+import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
+import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
+import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,7 +32,8 @@ public class PostController {
             @RequestBody @Valid PostCreateReqDto postCreateReqDto,
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return new ResponseEntity<>(ApiResult.success(postService.createPost(postCreateReqDto, loginUser)), HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResult.success(postService.createPost(postCreateReqDto, loginUser)),
+                HttpStatus.CREATED);
     }
 
     // 게시물 수정
@@ -37,7 +43,8 @@ public class PostController {
             @RequestBody @Valid PostModifyReqDto postModifyReqDto,
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("/{postId}")
@@ -55,9 +62,24 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
 
+
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResult<PostDetailRespDto>> getPostById(@PathVariable(value = "postId")Long postId, @AuthenticationPrincipal LoginUser loginUser){
         return new ResponseEntity<>(ApiResult.success(postService.getPostById(postId, loginUser)),HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResult<PostsSearchPageRespDto>> searchPosts(
+            @RequestParam(defaultValue = "0") final int page,
+            @RequestParam(defaultValue = "10") final int limit,
+            @RequestParam(required = false) final String keyword,
+            @RequestParam(required = false) final LocalDateTime startModifiedAt,
+            @RequestParam(required = false) final LocalDateTime endModifiedAt,
+            @RequestParam(defaultValue = "lastModifiedAt, desc") final String sort
+    ) {
+        final PostsSearchPageRespDto response = postService.searchKeyword(sort, keyword, page, limit, startModifiedAt,
+                endModifiedAt);
+        return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
 }
 
