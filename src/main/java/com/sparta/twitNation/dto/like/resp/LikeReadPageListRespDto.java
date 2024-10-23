@@ -6,9 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 
 public record LikeReadPageListRespDto(
-        long elementsCount,
-        long currentPage,
-        long nextPage,
+        Long elementsCount,
+        int currentPage,
+        int nextPage,
         boolean hasNextPage,
         long pageSize,
         List<LikeReadPageRespDto> respDtos
@@ -17,7 +17,7 @@ public record LikeReadPageListRespDto(
         this(
                 likePage.getTotalElements(),
                 likePage.getNumber(),
-                likePage.hasNext() ? likePage.getNumber() + 1 : null,
+                likePage.hasNext() ? likePage.getNumber() + 1 : -1,
                 likePage.hasNext(),
                 likePage.getSize(),
                 likePage.stream()
