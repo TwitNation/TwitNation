@@ -40,7 +40,8 @@ public class S3Service {
 
     @PostConstruct
     public void init() {
-        MAX_FILE_SIZE = parseMaxFileSize(maxFileSizeValue);
+        log.debug("MAX_FILE_SIZE: {}", MAX_FILE_SIZE);
+        maxFileSize = parseMaxFileSize(MAX_FILE_SIZE);
     }
 
 

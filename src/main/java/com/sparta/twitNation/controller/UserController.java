@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/api/users/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResult<UserService.UserProfileImgUpdateRespDto>> updateProfileImg(@RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+    public ResponseEntity<ApiResult<UserProfileImgUpdateRespDto>> updateProfileImg(@RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
                                                                                                @AuthenticationPrincipal LoginUser loginUser){
         return new ResponseEntity<>(ApiResult.success(userService.updateProfileImg(profileImg, loginUser)), HttpStatus.OK);
     }

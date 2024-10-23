@@ -97,6 +97,11 @@ public class UserService {
         String oldImgUrl = user.getProfileImg();
         String newImgUrl = null;
         try {
+            if ((file == null || file.isEmpty()) && oldImgUrl != null) {
+                s3Service.deleteImage(oldImgUrl);
+                user.updateProfileImg(null);
+                return new UserProfileImgUpdateRespDto(null);
+            }
             newImgUrl = s3Service.uploadImage(file);
             user.updateProfileImg(newImgUrl);
 
@@ -116,7 +121,4 @@ public class UserService {
         }
     }
 
-
-
-    public record UserProfileImgUpdateRespDto(String profileImg){}
 }
