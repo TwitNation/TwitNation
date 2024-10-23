@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 @Validated
-public class CommentController {
+public class CommentController implements CommentControllerDocs {
 
     private final CommentService commentService;
 
