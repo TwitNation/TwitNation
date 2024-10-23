@@ -5,6 +5,8 @@ import com.sparta.twitNation.domain.user.User;
 import java.time.LocalDateTime;
 
 public record PostsSearchRespDto(
+        long postId,
+        long userId,
         String userNickname,
         String userProfileImg,
         String content,
@@ -21,6 +23,8 @@ public record PostsSearchRespDto(
             final int retweetCount
     ) {
         return new PostsSearchRespDto(
+                post.getId(),
+                user.getId(),
                 user.getNickname(),
                 user.getProfileImg(),
                 post.getContent(),
