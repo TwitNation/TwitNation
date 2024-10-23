@@ -17,8 +17,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LikeService {
 
-    private final LikeRepository likeRepository;
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
 
     public LikeCreateRespDto toggleLike(User user, Long postId) {
         Optional<Like> likeOP = likeRepository.findByPostId(postId);
