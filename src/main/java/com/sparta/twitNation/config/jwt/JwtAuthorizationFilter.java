@@ -34,7 +34,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-
+            if(request.getRequestURI().contains("/swagger") || request.getRequestURI().contains("/api-docs")) {
+                chain.doFilter(request, response);
+                return;
+            }
             if(request.getRequestURI().contains("auth")) {
                 chain.doFilter(request, response);
                 return;
