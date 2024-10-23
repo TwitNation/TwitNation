@@ -4,10 +4,21 @@ import com.sparta.twitNation.domain.bookmark.Bookmark;
 import com.sparta.twitNation.domain.comment.Comment;
 import com.sparta.twitNation.domain.like.Like;
 import com.sparta.twitNation.domain.post.Post;
+import com.sparta.twitNation.domain.retweet.Retweet;
 import com.sparta.twitNation.domain.user.User;
+import com.sparta.twitNation.domain.user.UserRole;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class DummyObject {
+
+
+
+    protected Retweet mockRetweet(Post post){
+        return Retweet.builder()
+                .post(post)
+                .user(null)
+                .build();
+    }
     protected Like mockLike(Post post){
         return Like.builder()
                 .post(post)
@@ -36,6 +47,7 @@ public class DummyObject {
         return User.builder()
                 .id(1L)
                 .nickname("userAAA")
+                .role(UserRole.USER)
                 .email("userA@email.com")
                 .password(passwordEncoder.encode(password))
                 .build();
