@@ -5,6 +5,7 @@ import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PostWithDetails;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
@@ -14,7 +15,6 @@ import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
 import com.sparta.twitNation.dto.post.resp.PostsReadPageRespDto;
-import com.sparta.twitNation.dto.post.resp.PostsReadRespDto;
 import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
@@ -88,17 +88,8 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostsReadPageRespDto readPosts(final int page, final int limit) {
-        final Page<Post> posts = postRepository.findAll(
-                PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
+        final Page<PostWithDetails> posts = postRepository.findAllWithDetails(PageRequest.of(page, limit));
 
-        final Page<PostsReadRespDto> postsResponse = posts.map(
-                post -> {
-                    final int likeCount = likeRepository.countByPost(post);
-                    final int commentCount = commentRepository.countByPost(post);
-                    final int retweetCount = retweetRepository.countByPost(post);
-                    return PostsReadRespDto.from(post.getUser(), post, likeCount, commentCount, retweetCount);
-                });
-
-        return PostsReadPageRespDto.of(postsResponse);
+        return PostsReadPageRespDto.from(posts);
     }
 }
