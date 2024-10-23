@@ -67,16 +67,16 @@ public class UserService {
     }
 
     public UserDeleteRespDto deleteUser(UserDeleteReqDto dto, LoginUser loginUser) {
-        User findUser = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
+        User user = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
                 new CustomApiException(ErrorCode.USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(dto.password(), findUser.getPassword())) {
+        if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             throw new CustomApiException(ErrorCode.MISS_MATCHER_PASSWORD);
         }
-
-        userRepository.deleteById(findUser.getId());
+        s3Service.deleteImage(user.getProfileImg());
+        userRepository.deleteById(user.getId());
         SecurityContextHolder.clearContext();
 
-        return new UserDeleteRespDto(findUser.getId());
+        return new UserDeleteRespDto(user.getId());
     }
 }
