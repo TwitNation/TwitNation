@@ -10,10 +10,13 @@ import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -24,18 +27,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserDeleteService userDeleteService;
+    private final S3Service s3Service;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Transactional
-    public UserCreateRespDto register(UserCreateReqDto dto) {
-        String encodedPassword = passwordEncoder.encode(dto.password());
-        User user = new User(dto.passwordEncoded(encodedPassword));
-        Optional<User> userOP = userRepository.findByEmail(user.getEmail());
+    public UserCreateRespDto register(UserCreateReqDto dto, MultipartFile file) {
+        Optional<User> userOP = userRepository.findByEmail(dto.email());
         if (userOP.isPresent()) {
             throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
         }
-
+        String encodedPassword = passwordEncoder.encode(dto.password());
+        String imgUrl = s3Service.uploadImage(file);
+        User user = new User(dto.passwordEncoded(encodedPassword), imgUrl);
         User savedUser = userRepository.save(user);
-
         return new UserCreateRespDto(savedUser.getId(), savedUser.getEmail());
     }
 
@@ -71,16 +75,61 @@ public class UserService {
     }
 
     public UserDeleteRespDto deleteUser(UserDeleteReqDto dto, LoginUser loginUser) {
-        User findUser = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
+        User user = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
                 new CustomApiException(ErrorCode.USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(dto.password(), findUser.getPassword())) {
+        if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             throw new CustomApiException(ErrorCode.MISS_MATCHER_PASSWORD);
+        }
+
+        if(user.getProfileImg() != null) {
+            s3Service.deleteImage(user.getProfileImg());
         }
 
         userDeleteService.deleteUser(loginUser.getUser().getId());
         SecurityContextHolder.clearContext();
 
-        return new UserDeleteRespDto(findUser.getId());
+        return new UserDeleteRespDto(user.getId());
+    }
+
+    @Transactional
+    public UserProfileImgUpdateRespDto updateProfileImg(MultipartFile file, LoginUser loginUser){
+        User user = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
+                new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        String oldImgUrl = user.getProfileImg();
+        String newImgUrl = null;
+        try {
+            newImgUrl = s3Service.uploadImage(file);
+            user.updateProfileImg(newImgUrl);
+
+            if (oldImgUrl != null) {
+                s3Service.deleteImage(oldImgUrl);
+            }
+            return new UserProfileImgUpdateRespDto(newImgUrl);
+        } catch (Exception e) {
+            if (newImgUrl != null) {
+                try {
+                    s3Service.deleteImage(newImgUrl);
+                } catch (Exception ex) {
+                    log.error("변경 요청한 유저 프로필 사진 S3 삭제 실패: {}", ex.getMessage(), ex);
+                }
+            }
+            throw new CustomApiException(ErrorCode.FILE_UPLOAD_ERROR);
+        }
+    }
+
+    @Transactional
+    public UserProfileImgDeleteRespDto deleteProfileImg(LoginUser loginUser) {
+        User user = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
+                new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        String oldImgUrl = user.getProfileImg();
+        if (oldImgUrl != null) {
+            s3Service.deleteImage(oldImgUrl);
+            log.debug("유저 ID{}: 프로필 이미지 삭제 완료", user.getId());
+            user.updateProfileImg(null);
+        }
+        return new UserProfileImgDeleteRespDto(user.getId());
     }
 }

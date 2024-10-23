@@ -29,10 +29,9 @@ public class FollowService {
 
     private final FollowingRepository followingRepository;
     private final UserRepository userRepository;
-
     private final FollowRepository followRepository;
 
-    public FollowingReadPageRespDto followingList(Long userId, Pageable pageable){
+    public FollowingReadPageRespDto followingList(Long userId, Pageable pageable) {
         return followingRepository.findAllFollowing(userId, pageable);
     }
 
@@ -99,6 +98,4 @@ public class FollowService {
                 followers.getSize()
         );
     }
-
-
 }

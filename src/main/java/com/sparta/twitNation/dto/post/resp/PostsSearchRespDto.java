@@ -1,37 +1,30 @@
 package com.sparta.twitNation.dto.post.resp;
 
-import com.sparta.twitNation.domain.post.Post;
-import com.sparta.twitNation.domain.user.User;
 import java.time.LocalDateTime;
 
 public record PostsSearchRespDto(
-        long postId,
-        long userId,
+        Long postId,
+        Long userId,
         String userNickname,
         String userProfileImg,
         String content,
         LocalDateTime modifiedAt,
-        int likeCount,
-        int commentCount,
-        int retweetCount
+        Long likeCount,
+        Long commentCount,
+        Long retweetCount
 ) {
-    public static PostsSearchRespDto from(
-            final User user,
-            final Post post,
-            final int likeCount,
-            final int commentCount,
-            final int retweetCount
-    ) {
-        return new PostsSearchRespDto(
-                post.getId(),
-                user.getId(),
-                user.getNickname(),
-                user.getProfileImg(),
-                post.getContent(),
-                post.getLastModifiedAt(),
-                likeCount,
-                commentCount,
-                retweetCount
-        );
+    public PostsSearchRespDto(Long postId, Long userId, String userNickname, String userProfileImg, String content,
+                              LocalDateTime modifiedAt, Long likeCount, Long commentCount, Long retweetCount) {
+        this.postId = postId;
+        this.userId = userId;
+        this.userNickname = userNickname;
+        this.userProfileImg = userProfileImg;
+        this.content = content;
+        this.modifiedAt = modifiedAt;
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
+        this.retweetCount = retweetCount;
     }
 }
+
+
