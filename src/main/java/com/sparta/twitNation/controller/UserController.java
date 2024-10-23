@@ -67,4 +67,9 @@ public class UserController {
                                                                                                @AuthenticationPrincipal LoginUser loginUser){
         return new ResponseEntity<>(ApiResult.success(userService.updateProfileImg(profileImg, loginUser)), HttpStatus.OK);
     }
+
+    @DeleteMapping("/api/users/profile/image")
+    public ResponseEntity<ApiResult<UserProfileImgDeleteRespDto>> deleteProfileImg(@AuthenticationPrincipal LoginUser loginUser) {
+        return new ResponseEntity<>(ApiResult.success(userService.deleteProfileImg(loginUser)), HttpStatus.OK);
+    }
 }

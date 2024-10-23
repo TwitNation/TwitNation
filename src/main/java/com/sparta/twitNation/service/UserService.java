@@ -9,6 +9,7 @@ import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
+import jakarta.transaction.TransactionScoped;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,11 +98,6 @@ public class UserService {
         String oldImgUrl = user.getProfileImg();
         String newImgUrl = null;
         try {
-            if ((file == null || file.isEmpty()) && oldImgUrl != null) {
-                s3Service.deleteImage(oldImgUrl);
-                user.updateProfileImg(null);
-                return new UserProfileImgUpdateRespDto(null);
-            }
             newImgUrl = s3Service.uploadImage(file);
             user.updateProfileImg(newImgUrl);
 
@@ -121,4 +117,17 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public UserProfileImgDeleteRespDto deleteProfileImg(LoginUser loginUser) {
+        User user = userRepository.findById(loginUser.getUser().getId()).orElseThrow(() ->
+                new CustomApiException(ErrorCode.USER_NOT_FOUND));
+
+        String oldImgUrl = user.getProfileImg();
+        if (oldImgUrl != null) {
+            s3Service.deleteImage(oldImgUrl);
+            log.debug("유저 ID{}: 프로필 이미지 삭제 완료", user.getId());
+            user.updateProfileImg(null);
+        }
+        return new UserProfileImgDeleteRespDto(user.getId());
+    }
 }
