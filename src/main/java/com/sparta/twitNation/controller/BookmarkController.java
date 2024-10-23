@@ -21,23 +21,25 @@ public class BookmarkController {
     }
 
     @PostMapping("/bookmarks/{postId}")
-    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId) {
+    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser) {
 
 
         // Bookmark 생성
-        BookmarkCreateRespDto response = bookmarkService.createBookmark(postId);
+        BookmarkCreateRespDto response = bookmarkService.createBookmark(loginUser, postId);
 
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.CREATED);
         //return new ResponseEntity<>(ApiResult.success(bookmarkService.createBookmark(postId, userId)), HttpStatus.CREATED);
     }
 
+    //북마크 조회
     @GetMapping("/bookmarks")
-    public ResponseEntity<BookmarkViewRespDto> getBookmarks(
+    public ResponseEntity<ApiResult<BookmarkViewRespDto>> getBookmarks(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "10") int limit,
+            @AuthenticationPrincipal LoginUser loginUser
     ){
-        BookmarkViewRespDto response = bookmarkService.getBookmarks(page, limit);
-        return ResponseEntity.ok(response);
+        BookmarkViewRespDto response = bookmarkService.getBookmarks(page, limit, loginUser);
+        return ResponseEntity.ok(ApiResult.success(response));
 
     }
 

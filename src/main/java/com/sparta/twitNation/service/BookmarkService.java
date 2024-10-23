@@ -42,10 +42,12 @@ public class BookmarkService {
 
 
     @Transactional
-    public BookmarkCreateRespDto createBookmark(Long postId) {
+    public BookmarkCreateRespDto createBookmark(LoginUser loginUser, Long postId) {
 
-        User user = User.createTestUser();
-        LoginUser loginUser = new LoginUser(user);
+//        User user = User.createTestUser();
+//        LoginUser loginUser = new LoginUser(user);
+
+        Long userId = loginUser.getUser().getId();
 
         //게시글 존재 여부
         Post post = postRepository.findById(postId)
@@ -53,7 +55,7 @@ public class BookmarkService {
 
 
 
-        Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostIdAndUserId(postId, loginUser.getUser().getId());
+        Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostIdAndUserId(postId, userId);
 
         if (existingBookmark.isPresent()) {
             bookmarkRepository.delete(existingBookmark.get());
@@ -69,16 +71,18 @@ public class BookmarkService {
 
 
 
-    public BookmarkViewRespDto getBookmarks(int page, int limit) {
+    public BookmarkViewRespDto getBookmarks(int page, int limit, LoginUser loginUser) {
 
-        User user = User.createTestUser();
-        LoginUser loginUser = new LoginUser(user);
+//        User user = User.createTestUser();
+//        LoginUser loginUser = new LoginUser(user);
+
+        Long userId = loginUser.getUser().getId();
 
         PageRequest pageRequest = PageRequest.of(page, limit);
 
 
         // 북마크 목록을 조회하고, 관련된 게시글 정보
-        Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(loginUser.getUser().getId(), pageRequest);
+        Page<Bookmark> bookmarks = bookmarkRepository.findByUserId(userId, pageRequest);
 
 
         List<BookmarkPostDto> posts = bookmarks.getContent().stream()
