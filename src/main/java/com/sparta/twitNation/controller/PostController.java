@@ -6,10 +6,12 @@ import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
 import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,8 @@ public class PostController {
             @RequestBody @Valid PostCreateReqDto postCreateReqDto,
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return new ResponseEntity<>(ApiResult.success(postService.createPost(postCreateReqDto, loginUser)), HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResult.success(postService.createPost(postCreateReqDto, loginUser)),
+                HttpStatus.CREATED);
     }
 
     // 게시물 수정
@@ -40,7 +43,8 @@ public class PostController {
             @RequestBody @Valid PostModifyReqDto postModifyReqDto,
             @AuthenticationPrincipal LoginUser loginUser
     ) {
-        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)), HttpStatus.OK);
+        return new ResponseEntity<>(ApiResult.success(postService.modifyPost(postModifyReqDto, postId, loginUser)),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("/{postId}")
@@ -51,10 +55,24 @@ public class PostController {
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResult<UserPostsRespDto>> readPostByUser(
             @PathVariable final Long userId,
-            @RequestParam(defaultValue = "0", value = "page") int page,
-            @RequestParam(defaultValue = "10", value = "limit") int limit
+            @RequestParam(defaultValue = "0", value = "page") final int page,
+            @RequestParam(defaultValue = "10", value = "limit") final int limit
     ) {
         final UserPostsRespDto response = postService.readPostsBy(userId, page, limit);
+        return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResult<PostsSearchPageRespDto>> searchPosts(
+            @RequestParam(defaultValue = "0") final int page,
+            @RequestParam(defaultValue = "10") final int limit,
+            @RequestParam(required = false) final String keyword,
+            @RequestParam(required = false) final LocalDateTime startModifiedAt,
+            @RequestParam(required = false) final LocalDateTime endModifiedAt,
+            @RequestParam(defaultValue = "lastModifiedAt, desc") final String sort
+    ) {
+        final PostsSearchPageRespDto response = postService.searchKeyword(sort, keyword, page, limit, startModifiedAt,
+                endModifiedAt);
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
 }
