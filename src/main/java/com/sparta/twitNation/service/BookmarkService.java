@@ -39,20 +39,15 @@ public class BookmarkService {
     private final CommentRepository commentRepository;
 
 
-
-
     @Transactional
     public BookmarkCreateRespDto createBookmark(LoginUser loginUser, Long postId) {
 
-//        User user = User.createTestUser();
-//        LoginUser loginUser = new LoginUser(user);
 
         Long userId = loginUser.getUser().getId();
 
         //게시글 존재 여부
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomApiException(POST_NOT_FOUND));
-
 
 
         Optional<Bookmark> existingBookmark = bookmarkRepository.findByPostIdAndUserId(postId, userId);
@@ -70,11 +65,8 @@ public class BookmarkService {
     }
 
 
-
     public BookmarkViewRespDto getBookmarks(int page, int limit, LoginUser loginUser) {
 
-//        User user = User.createTestUser();
-//        LoginUser loginUser = new LoginUser(user);
 
         Long userId = loginUser.getUser().getId();
 
@@ -94,10 +86,10 @@ public class BookmarkService {
                             post.getUser().getNickname(), // 닉네임
                             post.getUser().getProfileImg(), // 프로필 이미지
                             post.getContent(), // 게시글 내용
-                            post.getLastModifiedAt() // 수정일
-//                        post.getLikeCount(), // 좋아요 수
-//                        post.getRetweetCount(), // 리트윗 수
-//                        post.getCommentCount() // 댓글 수
+                            post.getLastModifiedAt(), // 수정일
+                            //post.getLikeCount(), // 좋아요 수
+                            retweetRepository.countByPost(post),
+                            commentRepository.countByPost(post)
                     );
                 })
                 .collect(Collectors.toList());
