@@ -138,6 +138,7 @@ public class PostService {
         final Page<PostWithDetails> posts = postRepository.findAllWithDetails(PageRequest.of(page, limit));
 
         return PostsReadPageRespDto.from(posts);
+    }
 
     //게시글 단건 조회
     public PostDetailRespDto getPostById(Long postId, LoginUser loginUser){

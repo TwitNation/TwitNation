@@ -61,7 +61,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<ApiResult<PostDeleteRespDto>> deletePost(@PathVariable(value = "postId")Long postId, @AuthenticationPrincipal LoginUser loginUser){
+    public ResponseEntity<ApiResult<PostDeleteRespDto>> deletePost(@PathVariable(value = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser) {
         return new ResponseEntity<>(ApiResult.success(postService.deletePost(postId, loginUser)), HttpStatus.OK);
     }
 
@@ -81,20 +81,22 @@ public class PostController {
             @RequestParam(defaultValue = "10", value = "limit") int limit
     ) {
         final PostsReadPageRespDto response = postService.readPosts(page, limit);
+        return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
+    }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResult<PostDetailRespDto>> getPostById(@PathVariable(value = "postId")Long postId, @AuthenticationPrincipal LoginUser loginUser){
-        return new ResponseEntity<>(ApiResult.success(postService.getPostById(postId, loginUser)),HttpStatus.OK);
+    public ResponseEntity<ApiResult<PostDetailRespDto>> getPostById(@PathVariable(value = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser) {
+        return new ResponseEntity<>(ApiResult.success(postService.getPostById(postId, loginUser)), HttpStatus.OK);
     }
 
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<ApiResult<CommentListRespDto>> getCommentsByPostId(@PathVariable(value = "postId")Long postId,
+    public ResponseEntity<ApiResult<CommentListRespDto>> getCommentsByPostId(@PathVariable(value = "postId") Long postId,
                                                                              @RequestParam(defaultValue = "0", value = "page") @Min(0) int page,
                                                                              @RequestParam(defaultValue = "10", value = "limit") @Positive int limit,
                                                                              @AuthenticationPrincipal LoginUser loginUser) {
         return new ResponseEntity<>(ApiResult.success(postService.getCommentsByPostId(postId, loginUser.getUser(), page, limit)), HttpStatus.OK);
     }
-  
+
     @GetMapping("/search")
     public ResponseEntity<ApiResult<PostsSearchPageRespDto>> searchPosts(
             @RequestParam(defaultValue = "0") final int page,
@@ -109,4 +111,3 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
 }
-
