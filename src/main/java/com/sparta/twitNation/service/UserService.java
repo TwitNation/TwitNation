@@ -54,6 +54,10 @@ public class UserService {
         User findUser = userRepository.findById(userId).orElseThrow(() ->
                 new CustomApiException(ErrorCode.USER_NOT_FOUND));
 
+        if (passwordEncoder.matches(dto.password(), findUser.getPassword())) {
+            throw new CustomApiException(ErrorCode.SAME_PASSWORD_MATCHER);
+        }
+
         findUser.changeInfo(reqDto);
         return new UserUpdateRespDto(findUser);
     }
