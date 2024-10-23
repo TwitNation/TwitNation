@@ -120,8 +120,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostsReadPageRespDto readPosts(final int page, final int limit) {
-        final Page<PostWithDetails> posts = postRepository.findAllWithDetails(PageRequest.of(page, limit));
+    public PostsReadPageRespDto readPosts(final LoginUser loginUser, final int page, final int limit) {
+        final User user = loginUser.getUser();
+        final Page<PostWithDetails> posts = postRepository.findAllByFollowedUsers(user, PageRequest.of(page, limit));
         return PostsReadPageRespDto.from(posts);
     }
 

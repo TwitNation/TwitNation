@@ -82,7 +82,7 @@ public interface PostControllerDocs {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다",content = @Content(schema = @Schema(implementation = UserPostsRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "서버 내부에 오류가 발생헀습니다. 잠시 후에 시도해주세요",content = @Content(schema = @Schema(implementation = UserPostsRespDto.class), mediaType = "application/json"))
     })
-    ResponseEntity<ApiResult<PostsReadPageRespDto>> readPosts(@RequestParam(defaultValue = "0", value = "page") int page, @RequestParam(defaultValue = "10", value = "limit") int limit);
+    ResponseEntity<ApiResult<PostsReadPageRespDto>> readPosts(@AuthenticationPrincipal final LoginUser loginUser, @RequestParam(defaultValue = "0", value = "page") int page, @RequestParam(defaultValue = "10", value = "limit") int limit);
 
     @Operation(summary = "게시글 단건 조회 (댓글 목록 X)", description = "게시글 단건을 조회합니다")
     @ApiResponses(value = {
