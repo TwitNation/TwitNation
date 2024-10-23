@@ -25,7 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
             "left join Like l on l.post.id = p.id " +
             "left join Comment c on c.post.id = p.id " +
             "left join Retweet r on r.post.id = p.id " +
-            "where p.user in (select f.follower from Follow f where f.following = :loginUser) " +
+            "where p.user in (select f.following from Follow f where f.follower = :loginUser) " +
             "or p.user = :loginUser " +
             "group by p.id, u.id, u.nickname, u.profileImg, p.content, p.lastModifiedAt " +
             "order by p.lastModifiedAt desc")
