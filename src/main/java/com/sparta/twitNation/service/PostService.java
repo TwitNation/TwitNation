@@ -15,11 +15,16 @@ import com.sparta.twitNation.dto.comment.resp.CommentListRespDto;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.*;
+import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
+import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
+import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsSearchRespDto;
+import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +132,7 @@ public class PostService {
         return UserPostsRespDto.from(response);
     }
 
+
     //게시글 단건 조회
     public PostDetailRespDto getPostById(Long postId, LoginUser loginUser){
         Long userId = loginUser.getUser().getId();
@@ -162,6 +168,27 @@ public class PostService {
         return new CommentListRespDto(commentPage);
     }
 
+    public PostsSearchPageRespDto searchKeyword(
+            final String sort,
+            final String keyword,
+            final int page,
+            final int limit,
+            final LocalDateTime startModifiedAt,
+            final LocalDateTime endModifiedAt
+    ) {
+        final Page<Post> posts = postRepository.searchByNicknameAndKeyword(sort, keyword, startModifiedAt, endModifiedAt,
+                PageRequest.of(page, limit));
 
+        final Page<PostsSearchRespDto> response = posts.map(
+                post -> {
+                    final int likeCount = likeRepository.countByPost(post);
+                    final int commentCount = commentRepository.countByPost(post);
+                    final int retweetCount = retweetRepository.countByPost(post);
+                    return PostsSearchRespDto.from(post.getUser(), post, likeCount, commentCount, retweetCount);
+                });
 
+        return PostsSearchPageRespDto.from(response);
+    }
 }
+
+
