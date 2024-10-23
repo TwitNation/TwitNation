@@ -61,5 +61,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
 
-    //@PutMapping("/api/users/profile/image")
+    @PutMapping("/api/users/profile/image")
+    public ResponseEntity<ApiResult<UserService.UserProfileImgUpdateRespDto>> updateProfileImg(@RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+                                                                                               @AuthenticationPrincipal LoginUser loginUser){
+        return new ResponseEntity<>(ApiResult.success(userService.updateProfileImg(profileImg, loginUser)), HttpStatus.OK);
+    }
 }

@@ -97,7 +97,6 @@ public class UserService {
         String oldImgUrl = user.getProfileImg();
         String newImgUrl = null;
         try {
-
             newImgUrl = s3Service.uploadImage(file);
             user.updateProfileImg(newImgUrl);
 
