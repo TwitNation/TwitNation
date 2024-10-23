@@ -6,12 +6,16 @@ import com.sparta.twitNation.config.jwt.JwtProcess;
 import com.sparta.twitNation.config.jwt.JwtVo;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
 import com.sparta.twitNation.domain.comment.CommentRepository;
+import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
+import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
+import com.sparta.twitNation.dto.post.resp.PostDetailRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.dummy.DummyObject;
 import jakarta.persistence.EntityManager;
@@ -28,6 +32,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -71,16 +78,30 @@ class PostControllerTest extends DummyObject {
     @Autowired
     private BookmarkRepository bookmarkRepository;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
+    private RetweetRepository retweetRepository;
+
     private String token;
+
+    private LoginUser loginUser;
+    private User mockUser;
+    private Post mockPost;
 
     @BeforeEach
     void setUp(){
         User user = newUser();
-        userRepository.save(user);
+        mockUser = userRepository.save(user);
+
         Post post = newPost(user);
-        postRepository.save(post);
-        commentRepository.save(mockComment(post));
-        bookmarkRepository.save(mockBookmark(post));
+        mockPost = postRepository.save(post);
+
+        for(int i = 0;i<5;i++){
+            commentRepository.save(newComment(post, user));
+        }
+
         em.clear();
 
         LoginUser loginUser = new LoginUser(user);
@@ -177,6 +198,77 @@ class PostControllerTest extends DummyObject {
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("responseBody = " + responseBody);
+    }
+
+
+    @Test
+    @WithUserDetails(value = "userA@email.com", setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    void success_getPostById_test() throws Exception {
+
+        PostDetailWithUser mockPostDetailWithUser = new PostDetailWithUser() {
+            @Override
+            public Long getPostId() {
+                return mockPost.getId();
+            }
+
+            @Override
+            public Long getUserId() {
+                return mockUser.getId();
+            }
+
+            @Override
+            public String getNickname() {
+                return mockUser.getNickname();
+            }
+
+            @Override
+            public String getContent() {
+                return mockPost.getContent();
+            }
+
+            @Override
+            public LocalDateTime getModifiedAt() {
+                return mockPost.getLastModifiedAt();
+            }
+
+            @Override
+            public String getProfileImg() {
+                return null;
+            }
+        };
+
+        PostDetailRespDto mockResponse = new PostDetailRespDto(
+                mockPostDetailWithUser,
+                0,0,0
+        );
+
+
+        ResultActions resultActions = mvc.perform(get("/api/posts/{postId}", mockPost.getId())
+                        .header(JwtVo.HEADER, token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.postId").value(mockPost.getId()));
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("responseBody = " + responseBody);
+    }
+
+    @Test
+    @WithUserDetails(value = "userA@email.com", setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    void success_getCommentsByPostId_test() throws Exception {
+        int page = 0 ;
+        int limit = 3;
+
+        ResultActions resultActions = mvc.perform(get("/api/posts/{postId}/comments", 1)
+                        .header(JwtVo.HEADER, token)
+                        .param("page", page+"")
+                        .param("limit", limit+"")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("responseBody = " + responseBody);
+
     }
 
 }

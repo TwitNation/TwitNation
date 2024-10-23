@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticationManager.authenticate(authenticationToken);
         }catch (Exception e){
             //unsuccessfulAuthentication 호출
-            log.debug(e.getMessage());
+            log.debug(e.getMessage(), e);
             throw new InternalAuthenticationServiceException(e.getMessage(), e);
         }
     }

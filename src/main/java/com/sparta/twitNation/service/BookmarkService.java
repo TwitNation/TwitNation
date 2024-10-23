@@ -4,11 +4,10 @@ import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.bookmark.Bookmark;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
 import com.sparta.twitNation.domain.comment.CommentRepository;
-import com.sparta.twitNation.domain.like.LikeRespository;
+import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
-import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.bookmark.req.BookmarkPostDto;
 import com.sparta.twitNation.dto.bookmark.resp.BookmarkCreateRespDto;
@@ -34,7 +33,7 @@ public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final LikeRespository likeRespository;
+    private final LikeRepository likeRepository;
     private final RetweetRepository retweetRepository;
     private final CommentRepository commentRepository;
 
@@ -87,7 +86,7 @@ public class BookmarkService {
                             post.getUser().getProfileImg(), // 프로필 이미지
                             post.getContent(), // 게시글 내용
                             post.getLastModifiedAt(), // 수정일
-                            //post.getLikeCount(), // 좋아요 수
+                            likeRepository.countByPost(post), // 좋아요 수
                             retweetRepository.countByPost(post),
                             commentRepository.countByPost(post)
 
