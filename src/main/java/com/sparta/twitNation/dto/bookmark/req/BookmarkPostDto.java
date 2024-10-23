@@ -1,6 +1,7 @@
 package com.sparta.twitNation.dto.bookmark.req;
 
 import com.sparta.twitNation.domain.post.Post;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class BookmarkPostDto {
+    @Schema(description = "북마크 조회 결과를 가져옵니다")
     private String userNickname; // 게시글 작성자 닉네임
     private String userProfileImg; // 게시글 작성자 프로필 사진
     private String content; // 게시글 내용
