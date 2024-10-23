@@ -31,9 +31,9 @@ public interface BookmarkControllerDocs {
     @Operation(summary = "북마크 조회", description = "북마크한 게시글의 정보 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "북마크 조회 완료", content = @Content(schema =
-            @Schema(implementation = BookmarkPostDto.class), mediaType = "application/json")),
+            @Schema(implementation = BookmarkViewRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "401", description = "Authorization 헤더 재확인 바람", content = @Content(schema =
-            @Schema(implementation = BookmarkCreateRespDto.class), mediaType = "application/json"))
+            @Schema(implementation = BookmarkViewRespDto.class), mediaType = "application/json"))
     })
     ResponseEntity<ApiResult<BookmarkViewRespDto>> getBookmarks(
             @RequestParam(defaultValue = "0") @Parameter(description = "페이지 번호") int page ,
