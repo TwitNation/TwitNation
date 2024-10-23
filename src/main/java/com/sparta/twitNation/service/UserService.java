@@ -23,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserDeleteService userDeleteService;
 
     @Transactional
     public UserCreateRespDto register(UserCreateReqDto dto) {
@@ -77,7 +78,7 @@ public class UserService {
             throw new CustomApiException(ErrorCode.MISS_MATCHER_PASSWORD);
         }
 
-        userRepository.deleteById(findUser.getId());
+        userDeleteService.deleteUser(loginUser.getUser().getId());
         SecurityContextHolder.clearContext();
 
         return new UserDeleteRespDto(findUser.getId());
