@@ -21,14 +21,14 @@ public class BookmarkController {
     }
 
     @PostMapping("/bookmarks/{postId}")
-    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> createBookmark(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<ApiResult<BookmarkCreateRespDto>> changeBookmarkState(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser) {
 
 
         // Bookmark 생성
-        BookmarkCreateRespDto response = bookmarkService.createBookmark(loginUser, postId);
+        BookmarkCreateRespDto response = bookmarkService.changeBookmarkState(loginUser, postId);
 
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.CREATED);
-        //return new ResponseEntity<>(ApiResult.success(bookmarkService.createBookmark(postId, userId)), HttpStatus.CREATED);
+
     }
 
     //북마크 조회

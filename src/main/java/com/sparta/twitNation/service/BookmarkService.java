@@ -40,7 +40,7 @@ public class BookmarkService {
 
 
     @Transactional
-    public BookmarkCreateRespDto createBookmark(LoginUser loginUser, Long postId) {
+    public BookmarkCreateRespDto changeBookmarkState(LoginUser loginUser, Long postId) {
 
 
         Long userId = loginUser.getUser().getId();
@@ -90,6 +90,7 @@ public class BookmarkService {
                             //post.getLikeCount(), // 좋아요 수
                             retweetRepository.countByPost(post),
                             commentRepository.countByPost(post)
+
                     );
                 })
                 .collect(Collectors.toList());
