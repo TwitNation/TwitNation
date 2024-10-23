@@ -9,7 +9,6 @@ import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
-import jakarta.transaction.TransactionScoped;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,20 +26,27 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserDeleteService userDeleteService;
     private final S3Service s3Service;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Transactional
     public UserCreateRespDto register(UserCreateReqDto dto, MultipartFile file) {
-        Optional<User> userOP = userRepository.findByEmail(dto.email());
-        if (userOP.isPresent()) {
-            throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
-        }
+        userRepository.findByEmail(dto.email())
+                .ifPresent(user -> {
+                    throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
+                });
         String encodedPassword = passwordEncoder.encode(dto.password());
-        String imgUrl = s3Service.uploadImage(file);
-        User user = new User(dto.passwordEncoded(encodedPassword), imgUrl);
-        User savedUser = userRepository.save(user);
+        String imgUrl = uploadProfileImage(file);
+        User savedUser = userRepository.save(new User(dto.passwordEncoded(encodedPassword), imgUrl));
         return new UserCreateRespDto(savedUser.getId(), savedUser.getEmail());
+    }
+
+    private String uploadProfileImage(MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            return s3Service.uploadImage(file);
+        }
+        return null;
     }
 
     public UserEditPageRespDto editList(Long userId) {
@@ -81,10 +87,12 @@ public class UserService {
         if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             throw new CustomApiException(ErrorCode.MISS_MATCHER_PASSWORD);
         }
+
         if(user.getProfileImg() != null) {
             s3Service.deleteImage(user.getProfileImg());
         }
-        userRepository.deleteById(user.getId());
+
+        userDeleteService.deleteUser(loginUser.getUser().getId());
         SecurityContextHolder.clearContext();
 
         return new UserDeleteRespDto(user.getId());

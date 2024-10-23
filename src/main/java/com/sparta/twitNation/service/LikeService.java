@@ -1,12 +1,10 @@
 package com.sparta.twitNation.service;
 
-import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.Like;
 import com.sparta.twitNation.domain.like.LikeCustomRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
-import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.dto.like.resp.LikeCreateRespDto;
 import com.sparta.twitNation.dto.like.resp.LikeReadPageListRespDto;

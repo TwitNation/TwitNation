@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
@@ -25,5 +26,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("delete from Bookmark b where b.post.id = :postId")
     int deleteBookmarksByPostId(@Param(value = "postId") Long postId);
 
-
+    void deleteByUserId(Long userId);
 }
