@@ -83,6 +83,6 @@ public class CommentService {
 
         commentRepository.deleteById(comment.getId());
 
-        return new CommentDeleteRespDto(comment.getId(), commentRepository.existsById(commentId));
+        return new CommentDeleteRespDto(comment.getId());
     }
 }
