@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserControllerDocs{
 
     private final UserService userService;
 
