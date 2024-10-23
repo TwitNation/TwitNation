@@ -3,21 +3,17 @@ package com.sparta.twitNation.controller;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
-import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
-import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
-import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
-import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
-import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
+import com.sparta.twitNation.dto.post.resp.*;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,14 +48,20 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(postService.deletePost(postId, loginUser)), HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<ApiResult<UserPostsRespDto>> readPostByUser(
-            @PathVariable final Long userId,
-            @RequestParam(defaultValue = "0", value = "page") final int page,
-            @RequestParam(defaultValue = "10", value = "limit") final int limit
+            @PathVariable(value = "userId") final Long userId,
+            @RequestParam(defaultValue = "0", value = "page") int page,
+            @RequestParam(defaultValue = "10", value = "limit") int limit
     ) {
         final UserPostsRespDto response = postService.readPostsBy(userId, page, limit);
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<ApiResult<PostDetailRespDto>> getPostById(@PathVariable(value = "postId")Long postId, @AuthenticationPrincipal LoginUser loginUser){
+        return new ResponseEntity<>(ApiResult.success(postService.getPostById(postId, loginUser)),HttpStatus.OK);
     }
 
     @GetMapping("/search")

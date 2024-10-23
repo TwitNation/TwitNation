@@ -15,14 +15,14 @@ public class CustomResponseUtil {
 
     public static void fail(HttpServletResponse response, String msg, HttpStatus httpStatus){
         try {
-            ObjectMapper om = new ObjectMapper();
+
             ApiResult<Object> responseDto = ApiResult.error(httpStatus.value(), msg);
-            String responseBody = om.writeValueAsString(responseDto);
+            String responseBody = CustomUtil.convertToJson(responseDto);
 
             response.setContentType("application/json; charset=utf-8");
             response.setStatus(httpStatus.value());
-            response.getWriter().write(CustomUtil.convertToJson(responseBody));
-
+            response.getWriter().write(responseBody);
+            response.getWriter().flush();
         }catch (Exception e){
             log.error("서버 파싱 에러");
         }
