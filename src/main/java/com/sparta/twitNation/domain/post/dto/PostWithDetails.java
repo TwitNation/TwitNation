@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public interface PostWithDetails {
 
+    Long getPostId();
+
     String getUserNickname();
 
     String getUserProfileImg();
