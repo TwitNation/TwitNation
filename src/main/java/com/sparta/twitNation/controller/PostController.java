@@ -4,6 +4,10 @@ import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.comment.resp.CommentListRespDto;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
+import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsReadPageRespDto;
+import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.dto.post.resp.*;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
@@ -15,6 +19,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +74,12 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResult<PostsReadPageRespDto>> readPosts(
+            @RequestParam(defaultValue = "0", value = "page") int page,
+            @RequestParam(defaultValue = "10", value = "limit") int limit
+    ) {
+        final PostsReadPageRespDto response = postService.readPosts(page, limit);
 
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResult<PostDetailRespDto>> getPostById(@PathVariable(value = "postId")Long postId, @AuthenticationPrincipal LoginUser loginUser){
@@ -75,6 +93,7 @@ public class PostController {
                                                                              @AuthenticationPrincipal LoginUser loginUser) {
         return new ResponseEntity<>(ApiResult.success(postService.getCommentsByPostId(postId, loginUser.getUser(), page, limit)), HttpStatus.OK);
     }
+  
     @GetMapping("/search")
     public ResponseEntity<ApiResult<PostsSearchPageRespDto>> searchPosts(
             @RequestParam(defaultValue = "0") final int page,
