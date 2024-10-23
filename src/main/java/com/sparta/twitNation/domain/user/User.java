@@ -6,8 +6,6 @@ import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -65,4 +63,5 @@ public class User extends BaseEntity {
     public void updateProfileImg(String profileImg){
         this.profileImg = profileImg;
     }
+
 }
