@@ -2,6 +2,7 @@ package com.sparta.twitNation.controller;
 
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.like.resp.LikeCreateRespDto;
+import com.sparta.twitNation.dto.like.resp.LikeReadPageListRespDto;
 import com.sparta.twitNation.dto.like.resp.LikeReadPageRespDto;
 import com.sparta.twitNation.service.LikeService;
 import com.sparta.twitNation.util.api.ApiResult;
@@ -30,13 +31,13 @@ public class LikeController {
     }
 
     @GetMapping("/api/users/likes")
-    public ResponseEntity<ApiResult<Page<LikeReadPageRespDto>>> likePage(
+    public ResponseEntity<ApiResult<LikeReadPageListRespDto>> likePage(
             @AuthenticationPrincipal LoginUser loginUser,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<LikeReadPageRespDto> respDtos = likeService.likePosts(loginUser.getUser().getId(), PageRequest.of(page, size));
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDtos));
+        LikeReadPageListRespDto respDto = likeService.likePosts(loginUser.getUser().getId(), PageRequest.of(page, size));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
 
 }
