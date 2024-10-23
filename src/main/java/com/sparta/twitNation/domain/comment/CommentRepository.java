@@ -26,4 +26,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @EntityGraph(attributePaths = {"user"})
     Page<Comment> findAllByPost(Post post, Pageable pageable);
 
+    void deleteByUserId(Long userId);
+
 }

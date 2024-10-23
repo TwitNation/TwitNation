@@ -9,7 +9,6 @@ import com.sparta.twitNation.dto.user.req.UserUpdateReqDto;
 import com.sparta.twitNation.dto.user.resp.*;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
-import jakarta.transaction.TransactionScoped;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserDeleteService userDeleteService;
     private final S3Service s3Service;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -81,10 +81,12 @@ public class UserService {
         if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
             throw new CustomApiException(ErrorCode.MISS_MATCHER_PASSWORD);
         }
+
         if(user.getProfileImg() != null) {
             s3Service.deleteImage(user.getProfileImg());
         }
-        userRepository.deleteById(user.getId());
+
+        userDeleteService.deleteUser(loginUser.getUser().getId());
         SecurityContextHolder.clearContext();
 
         return new UserDeleteRespDto(user.getId());

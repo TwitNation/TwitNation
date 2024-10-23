@@ -37,7 +37,6 @@ public class FollowController {
     ) {
         FollowCreateRespDto response = followService.changeFollowState(loginUser, userId);
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.CREATED);
-
     }
 
     @GetMapping("/follow/{userId}")
@@ -48,6 +47,5 @@ public class FollowController {
     ) {
         FollowerViewRespDto response = followService.getFollwers(page, limit, loginUser);
         return ResponseEntity.ok(ApiResult.success(response));
-
     }
 }
