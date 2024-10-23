@@ -21,16 +21,11 @@ public record UserCreateReqDto(
         String nickname,
 
         @Size(max = 512)
-        String bio,
+        String bio
 
-        String profileImg
 ) {
 
-    public UserCreateReqDto withProfileImg(String profileImg) {
-        return new UserCreateReqDto(this.email, this.password, this.nickname, this.bio, profileImg);
-    }
-
     public UserCreateReqDto passwordEncoded(String password) {
-        return new UserCreateReqDto(this.email, password, this.nickname, this.bio, this.profileImg);
+        return new UserCreateReqDto(this.email, password, this.nickname, this.bio);
     }
 }

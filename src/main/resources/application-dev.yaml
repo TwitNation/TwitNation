@@ -28,6 +28,10 @@ spring:
     throw-exception-if-no-handler-found: true
   resources:
     add-mappings: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 
 logging:
@@ -43,3 +47,12 @@ springdoc:
     operationsSorter: method
     tryItOutEnabled: true
 
+cloud:
+  aws:
+    s3:
+      bucket: ${BUCKET_NAME}
+    stack.auto: false
+    region.static: ${REGION}
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
