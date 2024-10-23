@@ -1,14 +1,21 @@
 package com.sparta.twitNation.service;
 
+import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.Like;
+import com.sparta.twitNation.domain.like.LikeCustomRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.dto.like.resp.LikeCreateRespDto;
+import com.sparta.twitNation.dto.like.resp.LikeReadPageListRespDto;
+import com.sparta.twitNation.dto.like.resp.LikeReadPageRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,6 +26,7 @@ public class LikeService {
 
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final LikeCustomRepository likeCustomRepository;
 
     public LikeCreateRespDto toggleLike(User user, Long postId) {
         Optional<Like> likeOP = likeRepository.findByPostId(postId);
@@ -36,4 +44,10 @@ public class LikeService {
 
         return new LikeCreateRespDto(postId, true);
     }
+
+    public LikeReadPageListRespDto likePosts(Long userId, Pageable pageable) {
+        Page<LikeReadPageRespDto> respDtos = likeCustomRepository.searchLikes(userId, pageable);
+        return new LikeReadPageListRespDto(respDtos);
+    }
+
 }

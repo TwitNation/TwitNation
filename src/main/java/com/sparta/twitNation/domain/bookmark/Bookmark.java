@@ -28,6 +28,15 @@ public class Bookmark extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+
+
+    // User를 포함한 명시적인 생성자 추가
+    @Builder
+    public Bookmark(Post post, User user) {
+        this.post = post;
+        this.user = user;
+    }
+
     @Builder
     public Bookmark(Long id, Post post, User user) {
         this.id = id;
