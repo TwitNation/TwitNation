@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.config.auth.dto.LoginReqDto;
 import com.sparta.twitNation.config.auth.dto.LoginRespDto;
+import com.sparta.twitNation.util.CustomResponseUtil;
 import com.sparta.twitNation.util.CustomUtil;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.servlet.FilterChain;
@@ -44,12 +45,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             ObjectMapper om = new ObjectMapper();
             LoginReqDto loginReqDto = om.readValue(request.getInputStream(), LoginReqDto.class);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    loginReqDto.getUsername(), loginReqDto.getPassword()
+                    loginReqDto.getEmail(), loginReqDto.getPassword()
             );
             return authenticationManager.authenticate(authenticationToken);
         }catch (Exception e){
             //unsuccessfulAuthentication 호출
-            log.debug(e.getMessage());
+            log.debug(e.getMessage(), e);
             throw new InternalAuthenticationServiceException(e.getMessage(), e);
         }
     }
@@ -57,12 +58,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     //로그인 실패 시
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        ApiResult<Object> apiResult = ApiResult.error(HttpStatus.UNAUTHORIZED.value(), "로그인 실패");
-        String responseBody = CustomUtil.convertToJson(apiResult);
-
-        response.setContentType("application/json; charset=utf-8");
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().println(responseBody);
+        CustomResponseUtil.fail(response, "로그인 실패", HttpStatus.UNAUTHORIZED);
     }
 
     //로그인 성공 시
@@ -72,12 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtProcess.create(loginUser);
         LoginRespDto loginRespDto = new LoginRespDto(loginUser.getUser());
 
-        ApiResult<LoginRespDto> apiResult = ApiResult.success(loginRespDto);
-        String responseBody = CustomUtil.convertToJson(apiResult);
-
         response.addHeader(JwtVo.HEADER, token);
-        response.setContentType("application/json; charset=utf-8");
-        response.setStatus(200);
-        response.getWriter().println(responseBody);
+        CustomResponseUtil.success(response, loginRespDto);
     }
 }

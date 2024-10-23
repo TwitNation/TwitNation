@@ -3,6 +3,8 @@ package com.sparta.twitNation.domain.post;
 
 import com.sparta.twitNation.domain.base.BaseEntity;
 import com.sparta.twitNation.domain.user.User;
+import com.sparta.twitNation.ex.CustomApiException;
+import com.sparta.twitNation.ex.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -36,5 +38,11 @@ public class Post extends BaseEntity {
 
     public void modify(String content) {
         this.content = content;
+    }
+
+    public void validatePostOwner(Long userId){
+        if (!this.getUser().getId().equals(userId)) {
+            throw new CustomApiException(ErrorCode.POST_FORBIDDEN);
+        }
     }
 }

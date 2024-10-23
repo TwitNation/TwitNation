@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.ex.CustomJwtException;
+import com.sparta.twitNation.util.dummy.DummyObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 
-class JwtProcessTest {
+class JwtProcessTest extends DummyObject {
     @InjectMocks
     private JwtProcess jwtProcess;
     private LoginUser mockLoginUser;
@@ -26,14 +27,14 @@ class JwtProcessTest {
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        User user = User.builder().id(1L).build();
-        mockLoginUser = new LoginUser(user);
+        mockLoginUser = new LoginUser(newUser());
     }
 
     @Test
     void createToken_test() {
         // when
         String token = jwtProcess.create(mockLoginUser);
+        System.out.println("token = " + token);
 
         // then
         assertThat(token).isNotNull();

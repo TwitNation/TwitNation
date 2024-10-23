@@ -9,37 +9,58 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.sparta.twitNation.config.auth.LoginUser;
+import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.comment.Comment;
 import com.sparta.twitNation.domain.comment.CommentRepository;
+import com.sparta.twitNation.domain.like.Like;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
+import com.sparta.twitNation.domain.retweet.Retweet;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
+import com.sparta.twitNation.dto.comment.resp.CommentListRespDto;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
+import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
+import com.sparta.twitNation.dto.post.resp.PostDetailRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.dto.post.resp.PostsReadPageRespDto;
 import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.DisplayName;
+import com.sparta.twitNation.ex.ErrorCode;
+import com.sparta.twitNation.util.dummy.DummyObject;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.DisplayName;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-class PostServiceTest {
+class PostServiceTest extends DummyObject {
 
     @InjectMocks
     private PostService postService;
@@ -51,13 +72,28 @@ class PostServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private LikeRepository likeRepository;
-
-    @Mock
     private CommentRepository commentRepository;
 
     @Mock
+    private BookmarkRepository bookmarkRepository;
+
+    @Mock
+    private LikeRepository likeRepository;
+
+    @Mock
     private RetweetRepository retweetRepository;
+
+    private LoginUser loginUser;
+    private User mockUser;
+    private Post mockPost;
+
+    @BeforeEach
+    void setUp() {
+        mockUser = User.builder().id(1L).build();
+        loginUser = new LoginUser(mockUser);
+        mockPost = Post.builder().id(1L).user(mockUser).build();
+
+    }
 
     @Test
     void success_createPost_test() {
@@ -296,5 +332,140 @@ class PostServiceTest {
         assertThat(response.posts().get(2).likeCount()).isEqualTo(4);
         assertThat(response.posts().get(2).commentCount()).isEqualTo(5);
         assertThat(response.posts().get(2).retweetCount()).isEqualTo(6);
+    }
+
+    @Test
+    void success_deletePost_test() throws Exception{
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+        when(commentRepository.deleteCommentsByPostId(1L)).thenReturn(5);
+        when(likeRepository.deleteLikesByPostId(1L)).thenReturn(3);
+        when(retweetRepository.deleteRetweetsByPostId(1L)).thenReturn(2);
+        when(bookmarkRepository.deleteBookmarksByPostId(1L)).thenReturn(1);
+
+        PostDeleteRespDto result = postService.deletePost(mockPost.getId(), loginUser);
+
+        verify(userRepository).findById(1L);
+        verify(postRepository).findById(1L);
+        verify(commentRepository).deleteCommentsByPostId(1L);
+        verify(likeRepository).deleteLikesByPostId(1L);
+        verify(retweetRepository).deleteRetweetsByPostId(1L);
+        verify(bookmarkRepository).deleteBookmarksByPostId(1L);
+    }
+
+    @Test
+    void fail_deletePost_forbidden_test() {
+        User anotherUser = User.builder().id(2L).build();
+        LoginUser anotherLoginUser = new LoginUser(anotherUser);
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(anotherUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+
+        CustomApiException exception = assertThrows(CustomApiException.class, () -> {
+            postService.deletePost(1L, anotherLoginUser);
+        });
+
+        assertEquals(ErrorCode.POST_FORBIDDEN, exception.getErrorCode());
+    }
+
+    @Test
+    void success_getPostById_test(){
+
+        List<Comment> commentList = new ArrayList<>();
+        List<Like> likeList = new ArrayList<>();
+        List<Retweet> retweetList = new ArrayList<>();
+        for(int i = 0;i<10;i++){
+            retweetList.add(mockRetweet(mockPost));
+            commentList.add(mockComment(mockPost));
+            likeList.add(mockLike(mockPost));
+        }
+
+        PostDetailWithUser mockPostDetailWithUser = new PostDetailWithUser() {
+            @Override
+            public Long getPostId() {
+                return mockPost.getId();
+            }
+
+            @Override
+            public Long getUserId() {
+                return mockUser.getId();
+            }
+
+            @Override
+            public String getNickname() {
+                return mockUser.getNickname();
+            }
+
+            @Override
+            public String getContent() {
+                return mockPost.getContent();
+            }
+
+            @Override
+            public LocalDateTime getModifiedAt() {
+                return mockPost.getLastModifiedAt();
+            }
+
+            @Override
+            public String getProfileImg() {
+                return null;
+            }
+        };
+
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+        when(postRepository.getPostDetailWithUser(mockPost)).thenReturn(mockPostDetailWithUser);
+        when(likeRepository.countByPost(mockPost)).thenReturn(likeList.size());
+        when(commentRepository.countByPost(mockPost)).thenReturn(commentList.size());
+        when(retweetRepository.countByPost(mockPost)).thenReturn(retweetList.size());
+
+        PostDetailRespDto result = postService.getPostById(mockPost.getId(), loginUser);
+
+        assertNotNull(result);
+        assertEquals(likeList.size(), result.likeCount());
+        assertEquals(commentList.size(), result.commentCount());
+        assertEquals(retweetList.size(), result.retweetCount());
+        assertEquals(mockPost.getId(), result.postId());
+
+    }
+
+    @Test
+    void fail_getPostById_postNotFound_test() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //예외
+        CustomApiException exception = assertThrows(CustomApiException.class,
+                () -> postService.getPostById(1L, loginUser));
+
+        assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void success_getCommentsByPostId_test(){
+        int page = 0;
+        int limit = 10;
+
+        List<Comment >commentList = new ArrayList<>();
+        for(int i = 0;i<5;i++)
+            commentList.add(newComment(mockPost, mockUser));
+
+        PageImpl<Comment> commentPage = new PageImpl<>(
+                commentList,
+                PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt")),
+                commentList.size()
+        );
+
+        when(userRepository.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(mockPost.getId())).thenReturn(Optional.of(mockPost));
+        when(commentRepository.findAllByPost(any(Post.class), any(Pageable.class))).thenReturn(commentPage);
+
+        CommentListRespDto result = postService.getCommentsByPostId(mockPost.getId(), mockUser, page, limit);
+
+        verify(commentRepository).findAllByPost(any(Post.class), any(Pageable.class));
+        assertThat(result).isNotNull();
+        assertThat(result.commentList()).hasSize(commentList.size());
     }
 }
