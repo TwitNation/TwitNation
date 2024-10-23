@@ -20,7 +20,6 @@ public record UserUpdateReqDto(
         @Size(max = 20, message = "닉네임 글자 수는 20자까지만 입력해주세요. ")
         String nickname,
 
-        @NotBlank(message = "자기소개를 입력해주세요.")
         @Size(max = 512)
         String bio
 ){
