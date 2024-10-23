@@ -39,13 +39,13 @@ public class FollowController implements FollowControllerDocs{
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.CREATED);
     }
 
-    @GetMapping("/follow/{userId}")
+    @GetMapping("/follows/{userId}")
     public ResponseEntity<ApiResult<FollowerViewRespDto>> getFollowers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit,
-            @AuthenticationPrincipal LoginUser loginUser
+            @PathVariable Long userId
     ) {
-        FollowerViewRespDto response = followService.getFollwers(page, limit, loginUser);
+        FollowerViewRespDto response = followService.getFollwers(page, limit, userId);
         return ResponseEntity.ok(ApiResult.success(response));
     }
 }

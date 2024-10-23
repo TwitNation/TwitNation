@@ -69,9 +69,9 @@ public class FollowService {
 
     }
 
-    public FollowerViewRespDto getFollwers(int page, int limit, LoginUser loginUser) {
+    public FollowerViewRespDto getFollwers(int page, int limit, Long userId) {
 
-        Long userId = loginUser.getUser().getId();
+//        Long userId = loginUser.getUser().getId();
         //PageRequest pageRequest = PageRequest.of(page, limit);
         // 정렬 조건 추가 (아이디 기준으로 오름차순 정렬)
         PageRequest pageRequest = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt"));
