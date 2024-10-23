@@ -1,24 +1,21 @@
 package com.sparta.twitNation.service;
 
-import com.sparta.twitNation.domain.follow.FollowingRepository;
-import com.sparta.twitNation.dto.follow.resp.FollowingReadPageRespDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.follow.Follow;
 import com.sparta.twitNation.domain.follow.FollowRepository;
+import com.sparta.twitNation.domain.follow.FollowingRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.follow.req.FollowerDto;
 import com.sparta.twitNation.dto.follow.resp.FollowCreateRespDto;
 import com.sparta.twitNation.dto.follow.resp.FollowerViewRespDto;
+import com.sparta.twitNation.dto.follow.resp.FollowingReadPageRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

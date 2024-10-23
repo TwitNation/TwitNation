@@ -27,7 +27,7 @@ public class FollowingRepositoryImpl implements FollowingRepository {
 
         List<FollowingReadRespDto> followingList = jpaQueryFactory.select(new QFollowingReadRespDto(user.id, user.nickname, user.profileImg))
                 .from(follow)
-                .join(follow.following, user).fetchJoin()
+                .join(follow.following, user)
                 .where(follow.follower.id.eq(userId))
                 .orderBy(follow.createdAt.desc())
                 .offset(pageable.getOffset())
