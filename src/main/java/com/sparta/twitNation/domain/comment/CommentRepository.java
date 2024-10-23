@@ -19,7 +19,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     int deleteCommentsByPostId(@Param(value = "postId") Long postId);
 
 
-    @Query("SELECT COUNT(l) FROM Like l WHERE l.post = :post")
     int countByPost(@Param("post") final Post post);
 
 }
