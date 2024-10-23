@@ -4,20 +4,16 @@ import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.*;
-import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
-import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
-import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
-import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
-import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
