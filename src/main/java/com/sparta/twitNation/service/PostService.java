@@ -7,6 +7,7 @@ import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PostWithDetails;
 import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
@@ -19,6 +20,7 @@ import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsReadPageRespDto;
 import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
 import com.sparta.twitNation.dto.post.resp.PostsSearchRespDto;
 import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
@@ -49,7 +51,6 @@ public class PostService {
     private final LikeRepository likeRepository;
     private final RetweetRepository retweetRepository;
     private final BookmarkRepository bookmarkRepository;
-
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     // 게시물 생성
@@ -132,6 +133,11 @@ public class PostService {
         return UserPostsRespDto.from(response);
     }
 
+    @Transactional(readOnly = true)
+    public PostsReadPageRespDto readPosts(final int page, final int limit) {
+        final Page<PostWithDetails> posts = postRepository.findAllWithDetails(PageRequest.of(page, limit));
+
+        return PostsReadPageRespDto.from(posts);
 
     //게시글 단건 조회
     public PostDetailRespDto getPostById(Long postId, LoginUser loginUser){
