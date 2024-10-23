@@ -79,10 +79,11 @@ public class PostController implements PostControllerDocs{
 
     @GetMapping
     public ResponseEntity<ApiResult<PostsReadPageRespDto>> readPosts(
+            @AuthenticationPrincipal final LoginUser loginUser,
             @RequestParam(defaultValue = "0", value = "page") int page,
             @RequestParam(defaultValue = "10", value = "limit") int limit
     ) {
-        final PostsReadPageRespDto response = postService.readPosts(page, limit);
+        final PostsReadPageRespDto response = postService.readPosts(loginUser, page, limit);
         return new ResponseEntity<>(ApiResult.success(response), HttpStatus.OK);
     }
 
