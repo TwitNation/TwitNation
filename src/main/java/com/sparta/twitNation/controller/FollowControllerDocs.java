@@ -62,7 +62,7 @@ public interface FollowControllerDocs {
     ResponseEntity<ApiResult<FollowerViewRespDto>> getFollowers(
             @RequestParam(defaultValue = "0") @Parameter(description = "페이지 번호") int page ,
             @RequestParam(defaultValue = "10") @Parameter(description = "페이지에 나갈 크기") int limit,
-            @AuthenticationPrincipal LoginUser loginUser
+            @PathVariable Long useId
     );
 
 
