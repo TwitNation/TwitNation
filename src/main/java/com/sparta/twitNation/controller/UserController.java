@@ -26,11 +26,7 @@ public class UserController {
             @RequestPart("user") @Valid UserCreateReqDto dto,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
-
-        String profileImgUrl = null;
-        // S3 생성 로직 ...
-
-        UserCreateRespDto RespDto = userService.register(dto);
+        UserCreateRespDto RespDto = userService.register(dto, profileImg);
         ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }

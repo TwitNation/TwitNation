@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -23,18 +24,18 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
 
     @Transactional
-    public UserCreateRespDto register(UserCreateReqDto dto) {
-        String encodedPassword = passwordEncoder.encode(dto.password());
-        User user = new User(dto.passwordEncoded(encodedPassword));
-        Optional<User> userOP = userRepository.findByEmail(user.getEmail());
+    public UserCreateRespDto register(UserCreateReqDto dto, MultipartFile file) {
+        Optional<User> userOP = userRepository.findByEmail(dto.email());
         if (userOP.isPresent()) {
             throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
         }
-
+        String encodedPassword = passwordEncoder.encode(dto.password());
+        String imgUrl = s3Service.uploadImage(file);
+        User user = new User(dto.passwordEncoded(encodedPassword), imgUrl);
         User savedUser = userRepository.save(user);
-
         return new UserCreateRespDto(savedUser.getId(), savedUser.getEmail());
     }
 
