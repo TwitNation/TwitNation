@@ -84,6 +84,7 @@ class RetweetServiceTest {
                 nickname("test").
                 password("test")
                 .build();
+
         Post post = Post.builder().
                 id(postId).
                 content("ddd").
