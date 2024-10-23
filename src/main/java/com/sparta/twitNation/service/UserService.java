@@ -32,15 +32,21 @@ public class UserService {
 
     @Transactional
     public UserCreateRespDto register(UserCreateReqDto dto, MultipartFile file) {
-        Optional<User> userOP = userRepository.findByEmail(dto.email());
-        if (userOP.isPresent()) {
-            throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
-        }
+        userRepository.findByEmail(dto.email())
+                .ifPresent(user -> {
+                    throw new CustomApiException(ErrorCode.ALREADY_USER_EXIST);
+                });
         String encodedPassword = passwordEncoder.encode(dto.password());
-        String imgUrl = s3Service.uploadImage(file);
-        User user = new User(dto.passwordEncoded(encodedPassword), imgUrl);
-        User savedUser = userRepository.save(user);
+        String imgUrl = uploadProfileImage(file);
+        User savedUser = userRepository.save(new User(dto.passwordEncoded(encodedPassword), imgUrl));
         return new UserCreateRespDto(savedUser.getId(), savedUser.getEmail());
+    }
+
+    private String uploadProfileImage(MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            return s3Service.uploadImage(file);
+        }
+        return null;
     }
 
     public UserEditPageRespDto editList(Long userId) {

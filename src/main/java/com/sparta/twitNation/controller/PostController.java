@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
 @Validated
-public class PostController {
+public class PostController implements PostControllerDocs{
 
     private final PostService postService;
 
