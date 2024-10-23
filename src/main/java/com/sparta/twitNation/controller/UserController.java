@@ -24,8 +24,8 @@ public class UserController implements UserControllerDocs{
 
     @PostMapping("/auth/join")
     public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
-            @RequestPart("user") @Valid UserCreateReqDto dto,
-            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
+            @RequestBody @Valid UserCreateReqDto dto,
+            @ModelAttribute(value = "profileImg") MultipartFile profileImg
     ) {
         UserCreateRespDto RespDto = userService.register(dto, profileImg);
         ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
