@@ -44,21 +44,24 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public User(UserCreateReqDto dto) {
+    public User(UserCreateReqDto dto, String imgUrl) {
         this.email = dto.email();
         this.bio = dto.bio();
-        this.profileImg = dto.profileImg();
+        this.profileImg = imgUrl;
         this.nickname = dto.nickname();
         this.password = dto.password();
         this.role = UserRole.USER;
     }
-
 
     public void changeInfo(UserUpdateReqDto dto) {
         this.email = dto.email();
         this.password = dto.password();
         this.nickname = dto.nickname();
         this.bio = dto.bio();
+    }
+
+    public void updateProfileImg(String profileImg){
+        this.profileImg = profileImg;
     }
 
 }
