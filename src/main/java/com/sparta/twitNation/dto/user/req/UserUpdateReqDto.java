@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserCreateReqDto(
+public record UserUpdateReqDto(
         @NotBlank(message = "이메일을 입력헤주세요.")
         @Email(message = "정확한 이메일 형식으로 입력해주세요. ")
         String email,
@@ -21,16 +21,10 @@ public record UserCreateReqDto(
         String nickname,
 
         @Size(max = 512)
-        String bio,
-
-        String profileImg
-) {
-
-    public UserCreateReqDto withProfileImg(String profileImg) {
-        return new UserCreateReqDto(this.email, this.password, this.nickname, this.bio, profileImg);
+        String bio
+){
+    public UserUpdateReqDto passwordEncoded(String password) {
+        return new UserUpdateReqDto(this.email, password, this.nickname, this.bio);
     }
 
-    public UserCreateReqDto passwordEncoded(String password) {
-        return new UserCreateReqDto(this.email, password, this.nickname, this.bio, this.profileImg);
-    }
 }
