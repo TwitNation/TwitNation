@@ -10,6 +10,7 @@ import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +62,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
     }
 
-    @PutMapping("/api/users/profile/image")
+    @PutMapping(value = "/api/users/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResult<UserService.UserProfileImgUpdateRespDto>> updateProfileImg(@RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
                                                                                                @AuthenticationPrincipal LoginUser loginUser){
         return new ResponseEntity<>(ApiResult.success(userService.updateProfileImg(profileImg, loginUser)), HttpStatus.OK);
