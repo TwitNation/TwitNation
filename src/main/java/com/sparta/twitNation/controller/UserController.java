@@ -10,6 +10,7 @@ import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +27,7 @@ public class UserController {
             @RequestPart("user") @Valid UserCreateReqDto dto,
             @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
-
-        String profileImgUrl = null;
-        // S3 생성 로직 ...
-
-        UserCreateRespDto RespDto = userService.register(dto);
+        UserCreateRespDto RespDto = userService.register(dto, profileImg);
         ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }
@@ -63,5 +60,16 @@ public class UserController {
     {
         UserDeleteRespDto respDto = userService.deleteUser(dto, loginUser);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResult.success(respDto));
+    }
+
+    @PutMapping(value = "/api/users/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResult<UserProfileImgUpdateRespDto>> updateProfileImg(@RequestPart(value = "profileImg", required = false) MultipartFile profileImg,
+                                                                                               @AuthenticationPrincipal LoginUser loginUser){
+        return new ResponseEntity<>(ApiResult.success(userService.updateProfileImg(profileImg, loginUser)), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/api/users/profile/image")
+    public ResponseEntity<ApiResult<UserProfileImgDeleteRespDto>> deleteProfileImg(@AuthenticationPrincipal LoginUser loginUser) {
+        return new ResponseEntity<>(ApiResult.success(userService.deleteProfileImg(loginUser)), HttpStatus.OK);
     }
 }
