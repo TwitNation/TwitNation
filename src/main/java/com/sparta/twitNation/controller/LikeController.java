@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class LikeController {
+public class LikeController implements LikeControllerDocs{
 
     private final LikeService likeService;
 
