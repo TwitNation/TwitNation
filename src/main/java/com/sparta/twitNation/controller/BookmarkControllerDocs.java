@@ -26,7 +26,6 @@ public interface BookmarkControllerDocs {
             @ApiResponse(responseCode = "400", description = "유효성 검사 실패", content = @Content(schema = @Schema(implementation = BookmarkCreateRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "401", description = "인증이 필요합니다", content = @Content(schema = @Schema(implementation = BookmarkCreateRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "403", description = "권한이 필요합니다", content = @Content(schema = @Schema(implementation = BookmarkCreateRespDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다", content = @Content(schema = @Schema(implementation = BookmarkCreateRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "서버 내부에 오류가 발생헀습니다. 잠시 후에 시도해주세요", content = @Content(schema = @Schema(implementation = BookmarkCreateRespDto.class), mediaType = "application/json"))
     })
     ResponseEntity<ApiResult<BookmarkCreateRespDto>> changeBookmarkState(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser);
@@ -37,7 +36,6 @@ public interface BookmarkControllerDocs {
             @ApiResponse(responseCode = "401", description = "유효성 검사 실패", content = @Content(schema = @Schema(implementation = BookmarkViewRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "401", description = "인증이 필요합니다", content = @Content(schema = @Schema(implementation = BookmarkViewRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "403", description = "권한이 필요합니다", content = @Content(schema = @Schema(implementation = BookmarkViewRespDto.class), mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다", content = @Content(schema = @Schema(implementation = BookmarkViewRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "서버 내부에 오류가 발생헀습니다. 잠시 후에 시도해주세요", content = @Content(schema = @Schema(implementation = BookmarkViewRespDto.class), mediaType = "application/json"))
     })
     ResponseEntity<ApiResult<BookmarkViewRespDto>> getBookmarks(
