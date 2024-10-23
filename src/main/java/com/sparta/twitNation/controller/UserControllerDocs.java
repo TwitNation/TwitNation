@@ -32,7 +32,9 @@ public interface UserControllerDocs {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자입니다.", content = @Content(schema = @Schema(implementation = UserCreateRespDto.class), mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "서버 내부에 오류가 발생헀습니다. 잠시 후에 시도해주세요", content = @Content(schema = @Schema(implementation = UserCreateRespDto.class), mediaType = "application/json"))
     })
-    @PostMapping(value = "/auth/join", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+
+    @RequestMapping(method = RequestMethod.POST, value = "/auth/join",
+            consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
             @Parameter(description = "유저 정보") @RequestBody @Valid UserCreateReqDto dto,
             @Parameter(description = "프로필 이미지", required = false) @RequestParam(value = "profileImg", required = false) MultipartFile profileImg);
