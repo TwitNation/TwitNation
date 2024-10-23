@@ -36,6 +36,4 @@ public record LikeReadPageRespDto(
                 retweetCount
         );
     }
-
-
 }

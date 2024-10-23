@@ -9,6 +9,7 @@ import com.sparta.twitNation.domain.post.PostRepository;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.dto.like.resp.LikeCreateRespDto;
+import com.sparta.twitNation.dto.like.resp.LikeReadPageListRespDto;
 import com.sparta.twitNation.dto.like.resp.LikeReadPageRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
@@ -44,8 +45,9 @@ public class LikeService {
         return new LikeCreateRespDto(postId, true);
     }
 
-    public Page<LikeReadPageRespDto> likePosts(Long userId, Pageable pageable) {
-        return likeCustomRepository.searchLikes(userId, pageable);
+    public LikeReadPageListRespDto likePosts(Long userId, Pageable pageable) {
+        Page<LikeReadPageRespDto> respDtos = likeCustomRepository.searchLikes(userId, pageable);
+        return new LikeReadPageListRespDto(respDtos);
     }
 
 }
