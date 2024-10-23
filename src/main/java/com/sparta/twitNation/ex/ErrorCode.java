@@ -15,6 +15,7 @@ public enum ErrorCode {
     ALREADY_USER_EXIST(400, "존재하는 사용자입니다."),
     TOKEN_MISSING(401, "Authorization 헤더가 누락되었습니다"),
     MISS_MATCHER_PASSWORD(401, "비밀번호가 일치하지 않습니다."),
+    SAME_PASSWORD_MATCHER(400, "동일한 비밀번호로는 변경할 수 없습니다."),
     FOLLOW_FORBIDDEN(403, "자기 자신을 팔로우할 수 없습니다");
 
 
