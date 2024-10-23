@@ -2,10 +2,14 @@ package com.sparta.twitNation.service;
 
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.comment.Comment;
 import com.sparta.twitNation.domain.comment.CommentRepository;
+import com.sparta.twitNation.domain.like.Like;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
+import com.sparta.twitNation.domain.retweet.Retweet;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
@@ -13,9 +17,11 @@ import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
+import com.sparta.twitNation.dto.post.resp.PostDetailRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
+import com.sparta.twitNation.util.dummy.DummyObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +30,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +42,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-class PostServiceTest {
+class PostServiceTest extends DummyObject {
 
     @InjectMocks
     private PostService postService;
@@ -60,11 +69,13 @@ class PostServiceTest {
     private User mockUser;
     private Post mockPost;
 
+
     @BeforeEach
     void setUp() {
         mockUser = User.builder().id(1L).build();
         loginUser = new LoginUser(mockUser);
         mockPost = Post.builder().id(1L).user(mockUser).build();
+
     }
 
     @Test
@@ -237,5 +248,80 @@ class PostServiceTest {
         });
 
         assertEquals(ErrorCode.POST_FORBIDDEN, exception.getErrorCode());
+    }
+
+    @Test
+    void success_getPostById_test(){
+
+        List<Comment> commentList = new ArrayList<>();
+        List<Like> likeList = new ArrayList<>();
+        List<Retweet> retweetList = new ArrayList<>();
+        for(int i = 0;i<10;i++){
+            retweetList.add(mockRetweet(mockPost));
+            commentList.add(mockComment(mockPost));
+            likeList.add(mockLike(mockPost));
+        }
+
+        PostDetailWithUser mockPostDetailWithUser = new PostDetailWithUser() {
+            @Override
+            public Long getPostId() {
+                return mockPost.getId();
+            }
+
+            @Override
+            public Long getUserId() {
+                return mockUser.getId();
+            }
+
+            @Override
+            public String getNickname() {
+                return mockUser.getNickname();
+            }
+
+            @Override
+            public String getContent() {
+                return mockPost.getContent();
+            }
+
+            @Override
+            public LocalDateTime getModifiedAt() {
+                return mockPost.getLastModifiedAt();
+            }
+
+            @Override
+            public String getProfileImg() {
+                return null;
+            }
+        };
+
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+        when(postRepository.getPostDetailWithUser(mockPost)).thenReturn(mockPostDetailWithUser);
+        when(likeRepository.countByPost(mockPost)).thenReturn(likeList.size());
+        when(commentRepository.countByPost(mockPost)).thenReturn(commentList.size());
+        when(retweetRepository.countByPost(mockPost)).thenReturn(retweetList.size());
+
+        PostDetailRespDto result = postService.getPostById(mockPost.getId(), loginUser);
+
+        assertNotNull(result);
+        assertEquals(likeList.size(), result.likeCount());
+        assertEquals(commentList.size(), result.commentCount());
+        assertEquals(retweetList.size(), result.retweetCount());
+        assertEquals(mockPost.getId(), result.postId());
+
+    }
+
+    @Test
+    void fail_getPostById_postNotFound_test() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //예외
+        CustomApiException exception = assertThrows(CustomApiException.class,
+                () -> postService.getPostById(1L, loginUser));
+
+        assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
     }
 }

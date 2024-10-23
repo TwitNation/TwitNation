@@ -6,25 +6,29 @@ import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
 import com.sparta.twitNation.domain.post.PostRepository;
+import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
+import com.sparta.twitNation.dto.post.resp.*;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
 import com.sparta.twitNation.dto.post.resp.PostDeleteRespDto;
 import com.sparta.twitNation.dto.post.resp.PostModifyRespDto;
 import com.sparta.twitNation.dto.post.resp.PostReadPageRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsSearchPageRespDto;
+import com.sparta.twitNation.dto.post.resp.PostsSearchRespDto;
 import com.sparta.twitNation.dto.post.resp.UserPostsRespDto;
 import com.sparta.twitNation.ex.CustomApiException;
 import com.sparta.twitNation.ex.ErrorCode;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,7 +109,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public UserPostsRespDto readPostsBy(final Long userId, final int page, final int limit) {
         final User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND));
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND));
         final Page<Post> posts = postRepository.findByUser(user,
                 PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "lastModifiedAt")));
 
@@ -120,4 +124,49 @@ public class PostService {
 
         return UserPostsRespDto.from(response);
     }
+
+
+    //게시글 단건 조회
+    public PostDetailRespDto getPostById(Long postId, LoginUser loginUser){
+        Long userId = loginUser.getUser().getId();
+        userRepository.findById(userId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND)
+        );
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
+        );
+        //게시글과 작성자 조회
+        PostDetailWithUser postDetailWithUser = postRepository.getPostDetailWithUser(post);
+
+        //좋아요, 댓글, 리트윗 개수 조회
+        int likeCount = likeRepository.countByPost(post);
+        int commentCount = commentRepository.countByPost(post);
+        int retweetCount = retweetRepository.countByPost(post);
+
+        return new PostDetailRespDto(postDetailWithUser, likeCount, commentCount, retweetCount);
+    }
+
+
+    public PostsSearchPageRespDto searchKeyword(
+            final String sort,
+            final String keyword,
+            final int page,
+            final int limit,
+            final LocalDateTime startModifiedAt,
+            final LocalDateTime endModifiedAt
+    ) {
+        final Page<Post> posts = postRepository.searchByNicknameAndKeyword(sort, keyword, startModifiedAt, endModifiedAt,
+                PageRequest.of(page, limit));
+
+        final Page<PostsSearchRespDto> response = posts.map(
+                post -> {
+                    final int likeCount = likeRepository.countByPost(post);
+                    final int commentCount = commentRepository.countByPost(post);
+                    final int retweetCount = retweetRepository.countByPost(post);
+                    return PostsSearchRespDto.from(post.getUser(), post, likeCount, commentCount, retweetCount);
+                });
+
+        return PostsSearchPageRespDto.from(response);
+    }
 }
+
