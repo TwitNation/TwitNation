@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
@@ -15,6 +17,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @Query("delete from Like l where l.post.id = :postId")
     int deleteLikesByPostId(@Param(value = "postId") Long postId);
 
-    @Query("SELECT COUNT(l) FROM Like l WHERE l.post = :post")
     int countByPost(@Param("post") final Post post);
+
+    Optional<Like> findByPostId(Long postId);
 }
