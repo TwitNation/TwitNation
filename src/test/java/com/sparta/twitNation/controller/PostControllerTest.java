@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -96,6 +97,10 @@ class PostControllerTest extends DummyObject {
 
         Post post = newPost(user);
         mockPost = postRepository.save(post);
+
+        for(int i = 0;i<5;i++){
+            commentRepository.save(newComment(post, user));
+        }
 
         em.clear();
 
@@ -246,6 +251,24 @@ class PostControllerTest extends DummyObject {
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString();
         System.out.println("responseBody = " + responseBody);
+    }
+
+    @Test
+    @WithUserDetails(value = "userA@email.com", setupBefore = TestExecutionEvent.TEST_EXECUTION )
+    void success_getCommentsByPostId_test() throws Exception {
+        int page = 0 ;
+        int limit = 3;
+
+        ResultActions resultActions = mvc.perform(get("/api/posts/{postId}/comments", 1)
+                        .header(JwtVo.HEADER, token)
+                        .param("page", page+"")
+                        .param("limit", limit+"")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        System.out.println("responseBody = " + responseBody);
+
     }
 
 }

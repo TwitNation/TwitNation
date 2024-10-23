@@ -11,7 +11,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class DummyObject {
 
+    protected Retweet newRetweet(Post post, User user){
+        return Retweet.builder()
+                .post(post)
+                .user(user)
+                .build();
+    }
 
+    protected Like newLike(Post post, User user){
+        return Like.builder()
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    protected Comment newComment(Post post, User user){
+        return Comment.builder()
+                .post(post)
+                .content("test comment")
+                .user(user)
+                .build();
+    }
 
     protected Retweet mockRetweet(Post post){
         return Retweet.builder()

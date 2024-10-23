@@ -13,6 +13,7 @@ import com.sparta.twitNation.domain.retweet.Retweet;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
+import com.sparta.twitNation.dto.comment.resp.CommentListRespDto;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.PostCreateRespDto;
@@ -28,6 +29,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -323,5 +328,31 @@ class PostServiceTest extends DummyObject {
                 () -> postService.getPostById(1L, loginUser));
 
         assertEquals(ErrorCode.POST_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void success_getCommentsByPostId_test(){
+        int page = 0;
+        int limit = 10;
+
+        List<Comment >commentList = new ArrayList<>();
+        for(int i = 0;i<5;i++)
+            commentList.add(newComment(mockPost, mockUser));
+
+        PageImpl<Comment> commentPage = new PageImpl<>(
+                commentList,
+                PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt")),
+                commentList.size()
+        );
+
+        when(userRepository.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
+        when(postRepository.findById(mockPost.getId())).thenReturn(Optional.of(mockPost));
+        when(commentRepository.findAllByPost(any(Post.class), any(Pageable.class))).thenReturn(commentPage);
+
+        CommentListRespDto result = postService.getCommentsByPostId(mockPost.getId(), mockUser, page, limit);
+
+        verify(commentRepository).findAllByPost(any(Post.class), any(Pageable.class));
+        assertThat(result).isNotNull();
+        assertThat(result.commentList()).hasSize(commentList.size());
     }
 }

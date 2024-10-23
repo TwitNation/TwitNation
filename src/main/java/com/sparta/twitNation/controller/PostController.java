@@ -1,23 +1,27 @@
 package com.sparta.twitNation.controller;
 
 import com.sparta.twitNation.config.auth.LoginUser;
+import com.sparta.twitNation.dto.comment.resp.CommentListRespDto;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.*;
 import com.sparta.twitNation.service.PostService;
 import com.sparta.twitNation.util.api.ApiResult;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
+@Validated
 public class PostController {
 
     private final PostService postService;
@@ -64,6 +68,13 @@ public class PostController {
         return new ResponseEntity<>(ApiResult.success(postService.getPostById(postId, loginUser)),HttpStatus.OK);
     }
 
+    @GetMapping("/{postId}/comments")
+    public ResponseEntity<ApiResult<CommentListRespDto>> getCommentsByPostId(@PathVariable(value = "postId")Long postId,
+                                                                             @RequestParam(defaultValue = "0", value = "page") @Min(0) int page,
+                                                                             @RequestParam(defaultValue = "10", value = "limit") @Positive int limit,
+                                                                             @AuthenticationPrincipal LoginUser loginUser) {
+        return new ResponseEntity<>(ApiResult.success(postService.getCommentsByPostId(postId, loginUser.getUser(), page, limit)), HttpStatus.OK);
+    }
     @GetMapping("/search")
     public ResponseEntity<ApiResult<PostsSearchPageRespDto>> searchPosts(
             @RequestParam(defaultValue = "0") final int page,

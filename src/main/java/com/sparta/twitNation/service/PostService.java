@@ -2,6 +2,7 @@ package com.sparta.twitNation.service;
 
 import com.sparta.twitNation.config.auth.LoginUser;
 import com.sparta.twitNation.domain.bookmark.BookmarkRepository;
+import com.sparta.twitNation.domain.comment.Comment;
 import com.sparta.twitNation.domain.comment.CommentRepository;
 import com.sparta.twitNation.domain.like.LikeRepository;
 import com.sparta.twitNation.domain.post.Post;
@@ -10,6 +11,7 @@ import com.sparta.twitNation.domain.post.dto.PostDetailWithUser;
 import com.sparta.twitNation.domain.retweet.RetweetRepository;
 import com.sparta.twitNation.domain.user.User;
 import com.sparta.twitNation.domain.user.UserRepository;
+import com.sparta.twitNation.dto.comment.resp.CommentListRespDto;
 import com.sparta.twitNation.dto.post.req.PostCreateReqDto;
 import com.sparta.twitNation.dto.post.req.PostModifyReqDto;
 import com.sparta.twitNation.dto.post.resp.*;
@@ -28,9 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -146,6 +153,20 @@ public class PostService {
         return new PostDetailRespDto(postDetailWithUser, likeCount, commentCount, retweetCount);
     }
 
+    //특정 게시글의 댓글 목록 조회
+    public CommentListRespDto getCommentsByPostId(Long postId, User user, int page, int limit){
+        Long userId = user.getId();
+        userRepository.findById(userId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.USER_NOT_FOUND)
+        );
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new CustomApiException(ErrorCode.POST_NOT_FOUND)
+        );
+        //해당 게시글의 댓글 리스트 (with 댓글 작성자 정보) 조회
+        Pageable pageable =  PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Comment> commentPage = commentRepository.findAllByPost(post, pageable);
+        return new CommentListRespDto(commentPage);
+    }
 
     public PostsSearchPageRespDto searchKeyword(
             final String sort,
@@ -169,4 +190,5 @@ public class PostService {
         return PostsSearchPageRespDto.from(response);
     }
 }
+
 
