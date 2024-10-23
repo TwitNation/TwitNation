@@ -26,7 +26,7 @@ public interface BookmarkControllerDocs {
             @ApiResponse(responseCode = "401", description = "Authorization 헤더 재확인 바람", content = @Content(schema =
             @Schema(implementation = BookmarkCreateRespDto.class), mediaType = "application/json"))
     })
-    ResponseEntity<ApiResult<BookmarkCreateRespDto>> changeBookmarksState(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser);
+    ResponseEntity<ApiResult<BookmarkCreateRespDto>> changeBookmarkState(@PathVariable(name = "postId") Long postId, @AuthenticationPrincipal LoginUser loginUser);
 
     @Operation(summary = "북마크 조회", description = "북마크한 게시글의 정보 조회")
     @ApiResponses(value = {
