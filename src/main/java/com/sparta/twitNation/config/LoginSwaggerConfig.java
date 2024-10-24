@@ -41,15 +41,12 @@ public class LoginSwaggerConfig {
         components.addSchemas("LoginRespDto", createLoginRespDtoSchema());
     }
 
-    //    protected Paths loginPath(){
-//        return new Paths()
-//                .addPathItem("/caregivers/login", createLoginPathItem());
-//    }
+
     private PathItem createLoginPathItem(){
         return new PathItem()
                 .post(new Operation()
                         .summary("로그인")
-                        .description("email과 password를 사용해 요양사 로그인")
+                        .description("email과 password를 사용해 유저 로그인")
                         .tags(List.of("유저 API"))
                         .requestBody(createLoginReqBody())
                         .responses(createLoginResponses())
