@@ -4,6 +4,7 @@ import com.sparta.twitNation.util.api.ApiError;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -16,19 +17,31 @@ import java.time.LocalDateTime;
 
 @Configuration
 public class SwaggerConfig {
-    @Bean
-    public OpenAPI api() {
-        SecurityScheme apiKey = new SecurityScheme()
-                .type(SecurityScheme.Type.APIKEY)
-                .in(SecurityScheme.In.HEADER)
-                .name("Authorization");
-
-        SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("Bearer Token");
-
+    protected OpenAPI createBaseOpenAPI() {
         return new OpenAPI()
-                .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
-                .addSecurityItem(securityRequirement);
+                .components(new Components())
+                .info(apiInfo());
+    }
+    private SecurityScheme createAPIKeyScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
+    }
+
+
+    @Bean
+    public OpenAPI openAPI() {
+        return createBaseOpenAPI()
+                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                .components(new Components()
+                        .addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()));
+    }
+
+    public Info apiInfo(){
+        return new Info()
+                .title("TwitNation")
+                .description("기능 요청을 위한 API 명세")
+                .version("1.0");
     }
 
     @Bean
