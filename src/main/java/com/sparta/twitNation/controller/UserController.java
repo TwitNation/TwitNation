@@ -27,7 +27,7 @@ public class UserController implements UserControllerDocs{
         consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
             @RequestPart("user") @Valid UserCreateReqDto dto,
-            @RequestPart(value = "profileImg") MultipartFile profileImg
+            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg
     ) {
         UserCreateRespDto RespDto = userService.register(dto, profileImg);
         ApiResult<UserCreateRespDto> success = ApiResult.success(RespDto);
