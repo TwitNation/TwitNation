@@ -36,8 +36,8 @@ public interface UserControllerDocs {
     @RequestMapping(method = RequestMethod.POST, value = "/auth/join",
             consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<ApiResult<UserCreateRespDto>> joinUser(
-            @Parameter(description = "유저 정보") @RequestBody @Valid UserCreateReqDto dto,
-            @Parameter(description = "프로필 이미지", required = false) @RequestParam(value = "profileImg", required = false) MultipartFile profileImg);
+            @Parameter(description = "유저 정보") @RequestPart("user") @Valid UserCreateReqDto dto,
+            @Parameter(description = "프로필 이미지", required = false) @RequestPart(value = "profileImg", required = false) MultipartFile profileImg);
 
     @Operation(summary = "프로필 조회", description = "로그인한 사용자의 프로필 정보를 조회합니다.")
     @ApiResponses(value = {
