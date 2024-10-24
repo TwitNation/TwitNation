@@ -27,7 +27,7 @@ public class LikeService {
     private final LikeCustomRepository likeCustomRepository;
 
     public LikeCreateRespDto toggleLike(User user, Long postId) {
-        Optional<Like> likeOP = likeRepository.findByPostId(postId);
+        Optional<Like> likeOP = likeRepository.findByPostIdAndUserId(postId, user.getId());
 
         if (likeOP.isPresent()) {
             likeRepository.delete(likeOP.get());
