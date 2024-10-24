@@ -1,8 +1,14 @@
 package com.sparta.twitNation.ex;
 
+import lombok.Getter;
+
+@Getter
 public class CustomApiException extends RuntimeException{
-    public CustomApiException(String message){
-        super(message);
+
+    private final ErrorCode errorCode;
+    public CustomApiException(ErrorCode errorCode){
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
     }
 
 }
